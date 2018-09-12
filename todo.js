@@ -1,7 +1,7 @@
 const readline = require('readline');
 const sqlite3 = require('sqlite3').verbose();
 let db;
-
+var todoAnswer;
 //readline interface create
 const rl = readline.createInterface({
     input: process.stdin,
@@ -34,7 +34,7 @@ createDbPromise.then(function (fromResolve) {
 function test() {
 
     var createTablePromise = new Promise(function (resolve, reject) {
-        db.run("CREATE TABLE if not exists test (vote TEXT)", [], (err) => {
+        db.run("CREATE TABLE if not exists listToDo(done BIT, point TEXT)", [], (err) => {
             if (err){
                 reject('Error on creating table' + err);
             }
@@ -51,3 +51,37 @@ function test() {
     });
 
 }
+
+function ToDo(){
+    rl.question('Do you want to see current todo list? (1 for yes 2 for no)', (answer) =>{
+        console.log(answer);
+        if (answer == 1){
+            rl.question('What do you want to todo', (answer) =>{
+                console.log(answer);
+
+                //query to insert data
+               var inQuery = 'INSERT INTO listToDo (done, point) VALUES (0,';
+                //promise to add to do into db
+                var insertTodo = new Promise(function (resolve, reject) {
+                    inQuery = inQuery + "'" + answer + "')";
+                    console.log(inQuery);
+                    db.run(inQuery, [], (err) =>{
+                        if (err){
+                            reject('error on inserting data');
+                            console.log(err);
+                        }
+                        else{
+                            resolve('insert ok');
+                        }
+                    });
+                });
+                insertTodo.then(function (fromResolve) {
+                    console.log(fromResolve);
+                }).catch(function (fromReject) {
+                    console.log(fromReject);
+                })
+            })
+        }
+    });
+}
+ToDo();
