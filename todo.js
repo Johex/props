@@ -60,9 +60,9 @@ function ToDo(){
                 console.log(answer);
 
                 //query to insert data
-               var inQuery = 'INSERT INTO listToDo (done, point) VALUES (0,';
+               let inQuery = 'INSERT INTO listToDo (done, point) VALUES (0,';
                 //promise to add to do into db
-                var insertTodo = new Promise(function (resolve, reject) {
+                let insertTodo = new Promise(function (resolve, reject) {
                     inQuery = inQuery + "'" + answer + "')";
                     console.log(inQuery);
                     db.run(inQuery, [], (err) =>{
@@ -81,6 +81,13 @@ function ToDo(){
                     console.log(fromReject);
                 })
             })
+        }
+        if (answer == 2){
+            console.log('Ok doei!');
+        }
+        else {
+            console.log('please enter either 1 or 2');
+            ToDo();
         }
     });
 }
