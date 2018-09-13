@@ -54,7 +54,7 @@ function test() {
 }
 
 function ToDo(){
-    rl.question('Do you want to add to(1) or see (3) current todo list? (1 for yes 2 for no)', (answer) =>{ //todo add option for the user to see todo list
+    rl.question('Do you want to add to(1) or see (3) current todo list? (1 for yes 2 for no)', (answer) =>{
         console.log(answer);
         if (answer == 1){
             rl.question('What do you want to todo', (answer) =>{
@@ -83,8 +83,11 @@ function ToDo(){
                 })
             })
         }
-        if (answer == 2){
+        else if (answer == 2){
             console.log('Ok doei!');
+        }
+        else if (answer == 3){
+            displayToDoList();
         }
         else {
             console.log('please enter either 1 or 2');
@@ -97,7 +100,7 @@ ToDo();
 
 function displayToDoList() {
     //promise to get data
-    var listPromise = new Promise(function (resolve, reject) {
+    let listPromise = new Promise(function (resolve, reject) {
         db.all(getToDoSql, [], (err, rows)=>{
             if (err){
                 reject('error on getting todo list');
@@ -108,7 +111,10 @@ function displayToDoList() {
             }
 
             rows.forEach((row) =>{
-                console.log(row.point + row.done);
+                if (row.done == 0){
+                    var finised = 'no'
+                }
+                console.log(row.point + '       ' + finised);
             })
         });
     });
