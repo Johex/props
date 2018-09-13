@@ -2,6 +2,7 @@ const readline = require('readline');
 const sqlite3 = require('sqlite3').verbose();
 let db;
 var todoAnswer;
+var getToDoSql = 'SELECT * FROM listToDo';
 //readline interface create
 const rl = readline.createInterface({
     input: process.stdin,
@@ -53,7 +54,7 @@ function test() {
 }
 
 function ToDo(){
-    rl.question('Do you want to see current todo list? (1 for yes 2 for no)', (answer) =>{
+    rl.question('Do you want to add to(1) or see (3) current todo list? (1 for yes 2 for no)', (answer) =>{ //todo add option for the user to see todo list
         console.log(answer);
         if (answer == 1){
             rl.question('What do you want to todo', (answer) =>{
@@ -92,3 +93,28 @@ function ToDo(){
     });
 }
 ToDo();
+//displayToDoList();
+
+function displayToDoList() {
+    //promise to get data
+    var listPromise = new Promise(function (resolve, reject) {
+        db.all(getToDoSql, [], (err, rows)=>{
+            if (err){
+                reject('error on getting todo list');
+                console.log(err);
+            }
+            else {
+                resolve('got the todo list');
+            }
+
+            rows.forEach((row) =>{
+                console.log(row.point + row.done);
+            })
+        });
+    });
+    listPromise.then(function (fromResolve) {
+        console.log(fromResolve);
+    }).catch(function (fromReject) {
+        console.log(fromReject);
+    });
+}
