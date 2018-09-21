@@ -35,7 +35,7 @@ createDbPromise.then(function (fromResolve) {
 function test() {
 
     var createTablePromise = new Promise(function (resolve, reject) {
-        db.run("CREATE TABLE if not exists listToDo(done BIT, point TEXT)", [], (err) => {
+        db.run("CREATE TABLE if not exists listToDo(done BIT, point TEXT, id INTEGER PRIMARY KEY AUTOINCREMENT)", [], (err) => {
             if (err){
                 reject('Error on creating table' + err);
             }
@@ -54,7 +54,7 @@ function test() {
 }
 
 function ToDo(){
-    rl.question('Do you want to add to(1) or see (3) current todo list? (1 for yes 2 for no)', (answer) =>{
+    rl.question('Do you want to add to(1) or see (3) current todo list or mark point as done(4)? (2 to exit)', (answer) =>{
         console.log(answer);
         if (answer == 1){
             rl.question('What do you want to todo', (answer) =>{
@@ -123,4 +123,11 @@ function displayToDoList() {
     }).catch(function (fromReject) {
         console.log(fromReject);
     });
+}
+
+
+//todo option to mark as done!
+
+function markDone() {
+
 }
