@@ -1,7 +1,8 @@
 const readline = require('readline');
 const sqlite3 = require('sqlite3').verbose();
 let db;
-var todoAnswer;
+var answer;
+
 var getToDoSql = 'SELECT * FROM listToDo';
 //readline interface create
 const rl = readline.createInterface({
@@ -89,6 +90,9 @@ function ToDo(){
         else if (answer == 3){
             displayToDoList();
         }
+        else if (answer == 4){
+            markDone();
+        }
         else {
             console.log('please enter either 1 or 2');
             ToDo();
@@ -98,7 +102,7 @@ function ToDo(){
 ToDo();
 //displayToDoList();
 
-function displayToDoList() {
+function displayToDoList(answer) {
     //promise to get data
     let listPromise = new Promise(function (resolve, reject) {
         db.all(getToDoSql, [], (err, rows)=>{
@@ -110,11 +114,12 @@ function displayToDoList() {
                 resolve('got the todo list');
             }
 
+            //print yes or no for done or not
             rows.forEach((row) =>{
                 if (row.done == 0){
                     var finised = 'no'
                 }
-                console.log(row.point + '       ' + finised);
+                console.log(row.point + '       ' + finised + '        ' + row.id);
             })
         });
     });
@@ -127,7 +132,6 @@ function displayToDoList() {
 
 
 //todo option to mark as done!
+//function to mark option as done
 
-function markDone() {
 
-}

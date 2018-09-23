@@ -1,2 +1,3 @@
 w3schools
 sqlite nodejs tutorial ding, nog ff googlen
+https://www.youtube.com/watch?v=gnsO8-xJ8rs
