@@ -16,8 +16,14 @@ app.use(bodyParser.urlencoded({extended: false}));
 //set static path
 app.use(express.static(path.join(__dirname, 'public')));
 
+// index
 app.get('/', function(req, res){
     res.render('index');
+});
+
+// to-do page
+app.get('/todo', function(req, res){
+    res.render('todo');
 });
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
