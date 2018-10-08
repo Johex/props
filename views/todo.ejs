@@ -40,7 +40,9 @@
     <div class="row">
         <div class="col-md-6">
             <h1 class="text-center">Todo's</h1>
+
             <!--input form-->
+
             <form action="/newtodo" method="POST">
                 <div class="form-group">
                     <label for="ToDo">Add a TODO:</label>
@@ -49,19 +51,22 @@
                 <button type="submit" class="btn btn-default">Submit</button>
             <!--todo no breaks-->
             </form><br><br>
+
             <!--list of the items-->
-            <form action="/mark" method="POST">
+
+            <form action="/finish" method="POST">
                 <% for(var i = 0; i < todoList.length; i++) {%>
                 <div class="checkbox">
-                    <label><input type="checkbox" value=""><%= todoList[i] %></label>
+                    <label><input type="checkbox" name="todo" value='<%= todoList[i] %>'><%= todoList[i] %></label>
                 </div>
                 <% } %>
-                <button type="submit" class="btn btn-default">Mark selected items as done</button>
-                <button type="submit" class="btn btn-danger">Delete selected items</button>
+                <button type="submit" value="done" name="todoButton" class="btn btn-default">Mark selected items as done</button>
+                <button type="submit" value="delete" name="todoButton" class="btn btn-danger">Delete selected items</button>
 
             </form>
 
         </div>
+        <!--list thaht shows finished todos-->
         <div class="col-md-6">
             <h1 class="text-center">Finished</h1>
             <form>
