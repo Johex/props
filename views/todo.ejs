@@ -66,17 +66,17 @@
             </form>
 
         </div>
-        <!--list thaht shows finished todos-->
+        <!--list that shows finished todos-->
         <div class="col-md-6">
             <h1 class="text-center">Finished</h1>
-            <form>
+            <form action="/finish" method="POST">
                 <% for(var i = 0; i < finishedList.length; i++) {%>
                 <div class="checkbox">
-                    <label><input type="checkbox" value=""><%= finishedList[i]%></label>
+                    <label><input type="checkbox" value='<%= finishedList[i] %>' name="todoRight"><%= finishedList[i]%></label>
                 </div>
                 <% } %>
-                <button type="submit" class="btn btn-default">Undo selected items</button>
-                <button type="submit" class="btn btn-danger">Delete selected items</button>
+                <button type="submit" value="undo" name="finishedButton" class="btn btn-default">Undo selected items</button>
+                <button type="submit" value="delete" name="finishedButton" class="btn btn-danger">Delete selected items</button>
 
             </form>
         </div>

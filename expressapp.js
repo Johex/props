@@ -94,70 +94,50 @@ app.post("/newtodo", function(req, res) {
 //post route for moving to-dos to finshed
 app.post('/finish', function(req, res) {
     var finishedTodo = req.body.todo;
+    var todoRight = req.body.todoRight;
     var doneDelete = req.body.todoButton;
+    var undoDelete = req.body.finishedButton;
+    var move;
+    var remove;
+    //var for change finished in sql later setting it to one makes the item set to done and vice versa
+    var finishOrUndo;
+    //current status of the to-do 1 for done 0 for not done
+    var currentTodoStatus;
+    console.log(undoDelete);
     console.log(doneDelete);
     console.log(finishedTodo);
+    console.log(todoRight);
 
 
     // check if user want to delete or mark done
     if (doneDelete == 'done'){
-        //move marked todos to finished aka set done to 1 in db
-        var toBeDeleted;
-        // todo: this must be more easily achievable please help Els
-        //because if only one to-do-item is checked it doesnt run the for loop, so I first check if it is an array do you know a easier way to achieve this?
-        if (finishedTodo instanceof Array){
-            console.log('Array ___________________________________________');
-
-            for (var i = 0; i < finishedTodo.length; i++){
-                con.query("SELECT * FROM todo WHERE todo = '"+finishedTodo[i]+"'", function(err, rows){
-                    if (err){
-                        console.log(err);
-                        return;
-                    }
-                    var toBeDeleted;
-                    rows.forEach(function(result) {
-                        toBeDeleted = result.ID;
-                        console.log(toBeDeleted);
-                    })
-                    con.query("UPDATE todo SET done = 1 WHERE ID = '"+toBeDeleted+"'", function(err) {
-                        if (err){
-                            console.log(err);
-                            return;
-                        }
-                    })
-
-
-                });
-
-            }
-        }
-        else if (typeof finishedTodo === 'string' || finishedTodo instanceof String) {
-            con.query("SELECT * FROM todo WHERE todo = '"+finishedTodo+"' AND done != 1", function(err, rows){
-                if (err){
-                    console.log(err);
-                    return;
-                }
-                var toBeDeleted;
-                rows.forEach(function(result) {
-                    toBeDeleted = result.ID;
-                    console.log(toBeDeleted + 'testtest');
-                })
-                con.query("UPDATE todo SET done = 1 WHERE ID = '"+toBeDeleted+"'", function(err) {
-                    if (err){
-                        console.log(err);
-                        return;
-                    }
-                })
-
-            })
-        }
-
-        //move to done
-
-
+        move = true;
+        remove = false;
+        finishOrUndo = 1;
+        currentTodoStatus = 0;
+        moveOrDelete(finishedTodo, move, remove, finishOrUndo, currentTodoStatus);
     }
-    else if (doneDelete = 'delete'){
+    else if (doneDelete == 'delete'){
+        move = false;
+        remove = true;
+        currentTodoStatus = 0;
+        moveOrDelete(finishedTodo, move, remove, 0, currentTodoStatus)
+    }
 
+    //check for input in finished column
+    if (undoDelete == 'undo'){
+        move = true;
+        remove = false;
+        finishOrUndo = 0;
+        currentTodoStatus = 1;
+        moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus);
+    }
+    else if (undoDelete == 'delete'){
+        move = false;
+        remove = true;
+        finishOrUndo = 0;
+        currentTodoStatus = 1;
+        moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus);
     }
 
     res.redirect("/todo");
@@ -174,6 +154,70 @@ app.get('*', function (req, res) {
 });
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+
+//___________________________________________________________________________________________________
+//    function
+
+
+function moveOrDelete(todoToUse, move, remove, finishOrUndo, currentStatus) {
+    console.log(move);
+    var query;
+    if (move == true){
+        query = "UPDATE todo SET done = " + finishOrUndo + " WHERE ID = '";
+        console.log('moving.............');
+    }
+    else if (remove == true){
+        query = "DELETE FROM todo WHERE ID = '";
+    }
+
+    if (todoToUse instanceof Array){
+        console.log('Array ___________________________________________');
+
+        for (var i = 0; i < todoToUse.length; i++){
+            con.query("SELECT * FROM todo WHERE todo = '"+todoToUse[i]+"' AND done = " + currentStatus, function(err, rows){
+                if (err){
+                    console.log(err);
+                    return;
+                }
+                var toBeMoved;
+                rows.forEach(function(result) {
+                    toBeMoved = result.ID;
+                    console.log(toBeMoved);
+                })
+                con.query(query + toBeMoved +"'", function(err) {
+                    if (err){
+                        console.log(err);
+                        return;
+                    }
+                })
+
+
+            });
+
+        }
+    }
+    else if (typeof todoToUse === 'string' || todoToUse instanceof String) {
+        con.query("SELECT * FROM todo WHERE todo = '"+todoToUse+"' AND done = " + currentStatus, function(err, rows){
+            if (err){
+                console.log(err);
+                return;
+            }
+            var toBeMoved;
+            rows.forEach(function(result) {
+                toBeMoved = result.ID;
+                console.log(toBeMoved + 'testtest');
+            })
+            con.query(query + toBeMoved + "'", function(err) {
+                if (err){
+                    console.log(err);
+                    return;
+                }
+            })
+
+        })
+    }
+
+}
 
 
 
