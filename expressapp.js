@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const port = 3000;
 const mysql = require('mysql');
+const moveOrDelete = require('C:\\Users\\MatisseColombonColtr\\Documents\\pws matisse\\props\\functions/moveOrDelete.js');
 var test;
 
 var todoList = [];
@@ -115,13 +116,13 @@ app.post('/finish', function(req, res) {
         remove = false;
         finishOrUndo = 1;
         currentTodoStatus = 0;
-        moveOrDelete(finishedTodo, move, remove, finishOrUndo, currentTodoStatus);
+        moveOrDelete.moveOrDelete(finishedTodo, move, remove, finishOrUndo, currentTodoStatus);
     }
     else if (doneDelete == 'delete'){
         move = false;
         remove = true;
         currentTodoStatus = 0;
-        moveOrDelete(finishedTodo, move, remove, 0, currentTodoStatus)
+        moveOrDelete.moveOrDelete(finishedTodo, move, remove, 0, currentTodoStatus)
     }
 
     //check for input in finished column
@@ -130,14 +131,14 @@ app.post('/finish', function(req, res) {
         remove = false;
         finishOrUndo = 0;
         currentTodoStatus = 1;
-        moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus);
+        moveOrDelete.moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus);
     }
     else if (undoDelete == 'delete'){
         move = false;
         remove = true;
         finishOrUndo = 0;
         currentTodoStatus = 1;
-        moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus);
+        moveOrDelete.moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus);
     }
 
     res.redirect("/todo");
@@ -159,65 +160,65 @@ app.listen(port, () => console.log(`Example app listening on port ${port}!`));
 //    function
 
 
-function moveOrDelete(todoToUse, move, remove, finishOrUndo, currentStatus) {
-    console.log(move);
-    var query;
-    if (move == true){
-        query = "UPDATE todo SET done = " + finishOrUndo + " WHERE ID = '";
-        console.log('moving.............');
-    }
-    else if (remove == true){
-        query = "DELETE FROM todo WHERE ID = '";
-    }
+// function moveOrDelete(todoToUse, move, remove, finishOrUndo, currentStatus) {
+//     console.log(move);
+//     var query;
+//     if (move == true){
+//         query = "UPDATE todo SET done = " + finishOrUndo + " WHERE ID = '";
+//         console.log('moving.............');
+//     }
+//     else if (remove == true){
+//         query = "DELETE FROM todo WHERE ID = '";
+//     }
+//
+//     if (todoToUse instanceof Array){
+//         console.log('Array ___________________________________________');
+//
+//         for (var i = 0; i < todoToUse.length; i++){
+//             con.query("SELECT * FROM todo WHERE todo = '"+todoToUse[i]+"' AND done = " + currentStatus, function(err, rows){
+//                 if (err){
+//                     console.log(err);
+//                     return;
+//                 }
+//                 var toBeMoved;
+//                 rows.forEach(function(result) {
+//                     toBeMoved = result.ID;
+//                     console.log(toBeMoved);
+//                 })
+//                 con.query(query + toBeMoved +"'", function(err) {
+//                     if (err){
+//                         console.log(err);
+//                         return;
+//                     }
+//                 })
+//
+//
+//             });
+//
+//         }
+//     }
+//     else if (typeof todoToUse === 'string' || todoToUse instanceof String) {
+//         con.query("SELECT * FROM todo WHERE todo = '"+todoToUse+"' AND done = " + currentStatus, function(err, rows){
+//             if (err){
+//                 console.log(err);
+//                 return;
+//             }
+//             var toBeMoved;
+//             rows.forEach(function(result) {
+//                 toBeMoved = result.ID;
+//                 console.log(toBeMoved + 'testtest');
+//             })
+//             con.query(query + toBeMoved + "'", function(err) {
+//                 if (err){
+//                     console.log(err);
+//                     return;
+//                 }
+//             })
+//
+//         })
+//     }
 
-    if (todoToUse instanceof Array){
-        console.log('Array ___________________________________________');
-
-        for (var i = 0; i < todoToUse.length; i++){
-            con.query("SELECT * FROM todo WHERE todo = '"+todoToUse[i]+"' AND done = " + currentStatus, function(err, rows){
-                if (err){
-                    console.log(err);
-                    return;
-                }
-                var toBeMoved;
-                rows.forEach(function(result) {
-                    toBeMoved = result.ID;
-                    console.log(toBeMoved);
-                })
-                con.query(query + toBeMoved +"'", function(err) {
-                    if (err){
-                        console.log(err);
-                        return;
-                    }
-                })
-
-
-            });
-
-        }
-    }
-    else if (typeof todoToUse === 'string' || todoToUse instanceof String) {
-        con.query("SELECT * FROM todo WHERE todo = '"+todoToUse+"' AND done = " + currentStatus, function(err, rows){
-            if (err){
-                console.log(err);
-                return;
-            }
-            var toBeMoved;
-            rows.forEach(function(result) {
-                toBeMoved = result.ID;
-                console.log(toBeMoved + 'testtest');
-            })
-            con.query(query + toBeMoved + "'", function(err) {
-                if (err){
-                    console.log(err);
-                    return;
-                }
-            })
-
-        })
-    }
-
-}
+// }
 
 
 
