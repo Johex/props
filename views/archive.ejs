@@ -1,1 +1,67 @@
-test
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://storage.googleapis.com/matisse/style/bootstrap.min.css">
+    <script src="https://storage.googleapis.com/matisse/style/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://storage.googleapis.com/matisse/style/popper.min.js"></script>
+    <script src="https://storage.googleapis.com/matisse/style/bootstrap.min.js"></script>
+    <title>Hello, world!</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+    <a class="navbar-brand" href="/#">
+        <img src="https://storage.googleapis.com/matisse/afbeeldingen/250px-Flag_of_Sint_Maarten.svg.png" alt="Logo" style="width:40px;">
+    </a>
+
+
+    <!-- Links -->
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" href="todo">TODO list</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">Link 2</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">Link 3</a>
+        </li>
+    </ul>
+</nav>
+
+<div class="container">
+    <h1 class="text-center">Archived todos</h1>
+    <div class="row">
+        <div class="col">
+            <h1 class="text-center">test</h1>
+            <form action="/finish" method="POST">
+                <% for(var i = 0; i < todoList.length; i++) {%>
+                <div class="checkbox">
+                    <label><input type="checkbox" name="todo" value='<%= todoList[i] %>'><%= todoList[i] %></label>
+                </div>
+                <% } %>
+                <button type="submit" value="done" name="todoButton" class="btn btn-default">Mark selected items as done</button>
+                <button type="submit" value="delete" name="todoButton" class="btn btn-danger">Delete selected items</button>
+
+            </form>
+        </div>
+        <div class="col">
+            <h1 class="text-center"></h1>
+            <a href="#" title="Header" data-toggle="popover" data-trigger="hover" data-content=" How to add a NodeJS Express route in a separate file In this article I will show how you can manage your routes in a separate file from app.js. It also demonstrates more generally how adding modules to your applications works in node.js. Introduction In this article I will create a simple route in a route.js file and reference it from my app.js. This will demonstrate how">Hover over me</a>
+        </div>
+    </div>
+</div>
+
+<!--Enable popover-->
+<script>
+    $(document).ready(function(){
+        $('[data-toggle="popover"]').popover();
+    });
+</script>
+
+</body>
+</html>
