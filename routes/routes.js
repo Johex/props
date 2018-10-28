@@ -3,14 +3,14 @@ const express = require('express');
 const router = express.Router();
 const mysql = require('mysql');
 const path = require('path');
-const moveOrDelete = require('./moveOrDelete.js');
-const finish = require('./finish.js');
+const moveOrDelete = require('Y:\\6\\Informatics\\pws\\props\\functions\\moveOrDelete.js');
+const finish = require('Y:\\6\\Informatics\\pws\\props\\functions\\finish.js');
 
 const con = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "root",
-    database: "app"
+    host: "mcldisu5ppkm29wf.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
+    user: "qahzmtbcip5nby5j",
+    password: "jovbqlrqqzwpp2o0",
+    database: "e2bn6bjcv87iszow"
 })
 let todoList = [];
 let finishedList =[];
@@ -117,7 +117,7 @@ router.post('/finish', function(req, res) {
         moveOrDelete.moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus);
     }
 
-    res.redirect("/todo");
+    // res.redirect("/todo");
 
 
 

@@ -2,12 +2,15 @@ module.exports = {
 
     moveOrDelete: function moveOrDelete(todoToUse, move, remove, finishOrUndo, currentStatus) {
         const mysql = require('mysql');
+        const express = require('express');
+        const app = express();
         const con = mysql.createConnection({
-            host: "localhost",
-            user: "root",
-            password: "root",
-            database: "app"
+            host: "mcldisu5ppkm29wf.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
+            user: "qahzmtbcip5nby5j",
+            password: "jovbqlrqqzwpp2o0",
+            database: "e2bn6bjcv87iszow"
         });
+
 
         console.log(move);
         var query;
@@ -39,6 +42,7 @@ module.exports = {
                             return;
                         }
                     })
+                    res.redirect("/todo");
 
 
                 });
@@ -62,6 +66,7 @@ module.exports = {
                         return;
                     }
                 })
+                res.redirect("/todo");
 
             })
         }
