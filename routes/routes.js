@@ -2,8 +2,9 @@
 const express = require('express');
 const router = express.Router();
 const mysql = require('mysql');
-const moveOrDelete = require('Y:\\6\\Informatics\\pws\\props\\functions/moveOrDelete.js');
-const finish = require('Y:\\6\\Informatics\\pws\\props\\functions/finish.js');
+const path = require('path');
+const moveOrDelete = require('./moveOrDelete.js');
+const finish = require('./finish.js');
 
 const con = mysql.createConnection({
     host: "localhost",
