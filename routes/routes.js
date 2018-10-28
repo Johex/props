@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const mysql = require('mysql');
 const path = require('path');
-const moveOrDelete = require('Y:\\6\\Informatics\\pws\\props\\functions\\moveOrDelete.js');
+//const moveOrDelete = require('Y:\\6\\Informatics\\pws\\props\\functions\\moveOrDelete.js');
 const finish = require('Y:\\6\\Informatics\\pws\\props\\functions\\finish.js');
 
 const con = mysql.createConnection({
@@ -68,6 +68,8 @@ router.post('/newtodo', function(req, res) {
 
 })
 
+
+
 router.post('/finish', function(req, res) {
     //finish.finish();
     let finishedTodo = req.body.todo;
@@ -76,6 +78,7 @@ router.post('/finish', function(req, res) {
     let undoDelete = req.body.finishedButton;
     let move;
     let remove;
+    let okToRedirect
     //var for change finished in sql later setting it to one makes the item set to done and vice versa
     let finishOrUndo;
     //current status of the to-do 1 for done 0 for not done
@@ -92,13 +95,13 @@ router.post('/finish', function(req, res) {
         remove = false;
         finishOrUndo = 1;
         currentTodoStatus = 0;
-        moveOrDelete.moveOrDelete(finishedTodo, move, remove, finishOrUndo, currentTodoStatus);
+        moveOrDelete(finishedTodo, move, remove, finishOrUndo, currentTodoStatus);
     }
     else if (doneDelete == 'delete'){
         move = false;
         remove = true;
         currentTodoStatus = 0;
-        moveOrDelete.moveOrDelete(finishedTodo, move, remove, 0, currentTodoStatus)
+        moveOrDelete(finishedTodo, move, remove, 0, currentTodoStatus)
     }
 
     //check for input in finished column
@@ -107,20 +110,91 @@ router.post('/finish', function(req, res) {
         remove = false;
         finishOrUndo = 0;
         currentTodoStatus = 1;
-        moveOrDelete.moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus);
+        moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus);
     }
     else if (undoDelete == 'delete'){
         move = false;
         remove = true;
         finishOrUndo = 0;
         currentTodoStatus = 1;
-        moveOrDelete.moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus);
+        moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus);
     }
 
-    // res.redirect("/todo");
+//    function____________________________________________________________________________________
+    function moveOrDelete(todoToUse, move, remove, finishOrUndo, currentStatus) {
+        const mysql = require('mysql');
+        const con = mysql.createConnection({
+            host: "mcldisu5ppkm29wf.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
+            user: "qahzmtbcip5nby5j",
+            password: "jovbqlrqqzwpp2o0",
+            database: "e2bn6bjcv87iszow"
+        });
+
+        console.log(move);
+        var query;
+        if (move == true){
+            query = "UPDATE todo SET done = " + finishOrUndo + " WHERE ID = '";
+            console.log('moving.............');
+        }
+        else if (remove == true){
+            query = "DELETE FROM todo WHERE ID = '";
+        }
+
+        if (todoToUse instanceof Array){
+            console.log('Array ___________________________________________');
+
+            for (let i = 0; i < todoToUse.length; i++){
+                con.query("SELECT * FROM todo WHERE todo = '"+todoToUse[i]+"' AND done = " + currentStatus, function(err, rows){
+                    if (err){
+                        console.log(err);
+                        return;
+                    }
+                    let toBeMoved;
+                    rows.forEach(function(result) {
+                        toBeMoved = result.ID;
+                        console.log(toBeMoved);
+                    })
+                    con.query(query + toBeMoved +"'", function(err) {
+                        if (err){
+                            console.log(err);
+
+                        }
+                    })
+                    console.log(i);
+                    console.log(todoToUse.length);
+                    if (todoToUse.length == i+1){
+                        console.log(todoToUse.length + '              ' + i);
+                        res.redirect('/todo')
+                    }
 
 
+                });
 
+            }
+        }
+        else if (typeof todoToUse === 'string' || todoToUse instanceof String) {
+            con.query("SELECT * FROM todo WHERE todo = '"+todoToUse+"' AND done = " + currentStatus, function(err, rows){
+                if (err){
+                    console.log(err);
+                    return;
+                }
+                let toBeMoved;
+                rows.forEach(function(result) {
+                    toBeMoved = result.ID;
+                    console.log(toBeMoved + 'testtest');
+                });
+                con.query(query + toBeMoved + "'", function(err) {
+                    if (err){
+                        console.log(err);
+                    }
+                });
+                res.redirect('/todo')
+            })
+        }
+
+    }
+
+;
 
 });
 
@@ -134,3 +208,12 @@ router.get('*', function (req, res) {
 
 
 module.exports = router;
+
+
+
+
+
+
+
+
+
