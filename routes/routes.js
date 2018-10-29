@@ -3,8 +3,9 @@ const express = require('express');
 const router = express.Router();
 const mysql = require('mysql');
 const path = require('path');
-//const moveOrDelete = require('Y:\\6\\Informatics\\pws\\props\\functions\\moveOrDelete.js');
-const finish = require('Y:\\6\\Informatics\\pws\\props\\functions\\finish.js');
+const moveOrDelete = require('Y:\\6\\Informatics\\pws\\props\\functions/moveOrDelete.js');
+const archive = require('Y:\\6\\Informatics\\pws\\props\\functions/archive.js');
+
 
 const con = mysql.createConnection({
     host: "mcldisu5ppkm29wf.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
@@ -74,127 +75,62 @@ router.post('/finish', function(req, res) {
     //finish.finish();
     let finishedTodo = req.body.todo;
     let todoRight = req.body.todoRight;
-    let doneDelete = req.body.todoButton;
+    let doneDeleteArchive = req.body.todoButton;
     let undoDelete = req.body.finishedButton;
     let move;
     let remove;
+    let archive;
     let okToRedirect
     //var for change finished in sql later setting it to one makes the item set to done and vice versa
     let finishOrUndo;
     //current status of the to-do 1 for done 0 for not done
     let currentTodoStatus;
-    console.log(undoDelete);
-    console.log(doneDelete);
-    console.log(finishedTodo);
-    console.log(todoRight);
+    console.log(doneDeleteArchive);
+
 
 
     // check if user want to delete or mark done
-    if (doneDelete == 'done'){
+    if (doneDeleteArchive == 'done'){
         move = true;
         remove = false;
+        archive = false;
         finishOrUndo = 1;
         currentTodoStatus = 0;
-        moveOrDelete(finishedTodo, move, remove, finishOrUndo, currentTodoStatus);
+        moveOrDelete.moveOrDelete(finishedTodo, move, remove, finishOrUndo, currentTodoStatus, archive);
     }
-    else if (doneDelete == 'delete'){
+    else if (doneDeleteArchive == 'delete'){
         move = false;
         remove = true;
+        archive = false;
         currentTodoStatus = 0;
-        moveOrDelete(finishedTodo, move, remove, 0, currentTodoStatus)
+        moveOrDelete.moveOrDelete(finishedTodo, move, remove, 0, currentTodoStatus, archive)
+    }
+    else if (doneDeleteArchive == 'archive'){
+        move = false;
+        remove = false;
+        archive = true;
+        currentTodoStatus = 0;
+        moveOrDelete.moveOrDelete(finishedTodo, move, remove, 0, currentTodoStatus, archive)
     }
 
     //check for input in finished column
     if (undoDelete == 'undo'){
         move = true;
         remove = false;
+        archive = false
         finishOrUndo = 0;
         currentTodoStatus = 1;
-        moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus);
+        moveOrDelete.moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus);
     }
     else if (undoDelete == 'delete'){
         move = false;
         remove = true;
         finishOrUndo = 0;
         currentTodoStatus = 1;
-        moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus);
+        moveOrDelete.moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus);
     }
 
-//    function____________________________________________________________________________________
-    function moveOrDelete(todoToUse, move, remove, finishOrUndo, currentStatus) {
-        const mysql = require('mysql');
-        const con = mysql.createConnection({
-            host: "mcldisu5ppkm29wf.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
-            user: "qahzmtbcip5nby5j",
-            password: "jovbqlrqqzwpp2o0",
-            database: "e2bn6bjcv87iszow"
-        });
-
-        console.log(move);
-        var query;
-        if (move == true){
-            query = "UPDATE todo SET done = " + finishOrUndo + " WHERE ID = '";
-            console.log('moving.............');
-        }
-        else if (remove == true){
-            query = "DELETE FROM todo WHERE ID = '";
-        }
-
-        if (todoToUse instanceof Array){
-            console.log('Array ___________________________________________');
-
-            for (let i = 0; i < todoToUse.length; i++){
-                con.query("SELECT * FROM todo WHERE todo = '"+todoToUse[i]+"' AND done = " + currentStatus, function(err, rows){
-                    if (err){
-                        console.log(err);
-                        return;
-                    }
-                    let toBeMoved;
-                    rows.forEach(function(result) {
-                        toBeMoved = result.ID;
-                        console.log(toBeMoved);
-                    })
-                    con.query(query + toBeMoved +"'", function(err) {
-                        if (err){
-                            console.log(err);
-
-                        }
-                    })
-                    console.log(i);
-                    console.log(todoToUse.length);
-                    if (todoToUse.length == i+1){
-                        console.log(todoToUse.length + '              ' + i);
-                        res.redirect('/todo')
-                    }
-
-
-                });
-
-            }
-        }
-        else if (typeof todoToUse === 'string' || todoToUse instanceof String) {
-            con.query("SELECT * FROM todo WHERE todo = '"+todoToUse+"' AND done = " + currentStatus, function(err, rows){
-                if (err){
-                    console.log(err);
-                    return;
-                }
-                let toBeMoved;
-                rows.forEach(function(result) {
-                    toBeMoved = result.ID;
-                    console.log(toBeMoved + 'testtest');
-                });
-                con.query(query + toBeMoved + "'", function(err) {
-                    if (err){
-                        console.log(err);
-                    }
-                });
-                res.redirect('/todo')
-            })
-        }
-
-    }
-
-;
+    res.redirect('/todo')
 
 });
 

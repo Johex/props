@@ -39,19 +39,14 @@
         <div class="col">
             <h1 class="text-center">test</h1>
             <form action="/finish" method="POST">
-                <% for(var i = 0; i < todoList.length; i++) {%>
                 <div class="checkbox">
-                    <label><input type="checkbox" name="todo" value='<%= todoList[i] %>'><%= todoList[i] %></label>
+                    <label><input type="checkbox" name="todo" value=''>fgsr</label>
                 </div>
-                <% } %>
+
                 <button type="submit" value="done" name="todoButton" class="btn btn-default">Mark selected items as done</button>
                 <button type="submit" value="delete" name="todoButton" class="btn btn-danger">Delete selected items</button>
 
             </form>
-        </div>
-        <div class="col">
-            <h1 class="text-center"></h1>
-            <a href="#" title="Header" data-toggle="popover" data-trigger="hover" data-content=" How to add a NodeJS Express route in a separate file In this article I will show how you can manage your routes in a separate file from app.js. It also demonstrates more generally how adding modules to your applications works in node.js. Introduction In this article I will create a simple route in a route.js file and reference it from my app.js. This will demonstrate how">Hover over me</a>
         </div>
     </div>
 </div>
