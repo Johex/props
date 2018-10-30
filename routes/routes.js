@@ -3,16 +3,17 @@ const express = require('express');
 const router = express.Router();
 const mysql = require('mysql');
 const path = require('path');
-const moveOrDelete = require('Y:\\6\\Informatics\\pws\\props\\functions/moveOrDelete.js');
-const archive = require('Y:\\6\\Informatics\\pws\\props\\functions/archive.js');
+const moveOrDelete = require('Y:\\6\\Informatics\\pws\\props\\functions\\moveOrDelete.js');
+const delay = require('delay');
+//const archive = require('Y:\\6\\Informatics\\pws\\props\\functions/archive.js');
 
 
 const con = mysql.createConnection({
-    host: "mcldisu5ppkm29wf.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
-    user: "qahzmtbcip5nby5j",
-    password: "jovbqlrqqzwpp2o0",
-    database: "e2bn6bjcv87iszow"
-})
+    host: "35.234.124.218",
+    user: "root",
+    password: "nyqegpueuxhrcjkkuehkvs%duumgkmwttymt6qfiuvcgqncku<ygPqtxLsuyeiazkqszk6",
+    database: "app"
+});
 let todoList = [];
 let finishedList =[];
 
@@ -129,8 +130,11 @@ router.post('/finish', function(req, res) {
         currentTodoStatus = 1;
         moveOrDelete.moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus);
     }
-
-    res.redirect('/todo')
+    //wait for mysql db then redirect back to to-do
+    (async () => {
+        await delay(600);
+        res.redirect('/todo');
+    })();
 
 });
 

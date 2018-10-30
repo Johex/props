@@ -3,12 +3,11 @@ module.exports = {
     moveOrDelete: function moveOrDelete(todoToUse, move, remove, finishOrUndo, currentStatus, archive) {
         const mysql = require('mysql');
         const con = mysql.createConnection({
-            host: "mcldisu5ppkm29wf.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
-            user: "qahzmtbcip5nby5j",
-            password: "jovbqlrqqzwpp2o0",
-            database: "e2bn6bjcv87iszow"
+            host: "35.234.124.218",
+            user: "root",
+            password: "nyqegpueuxhrcjkkuehkvs%duumgkmwttymt6qfiuvcgqncku<ygPqtxLsuyeiazkqszk6",
+            database: "app"
         });
-
         console.log(move);
         let query;
         //must the item be moved?
@@ -55,7 +54,7 @@ module.exports = {
                     console.log(err);
                     return;
                 }
-                var toBeMoved;
+                let toBeMoved;
                 rows.forEach(function(result) {
                     toBeMoved = result.ID;
                     console.log(toBeMoved + 'testtest');
