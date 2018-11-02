@@ -33,18 +33,23 @@
     </ul>
 </nav>
 
+<!--archived list-->
 <div class="container">
     <h1 class="text-center">Archived todos</h1>
     <div class="row">
         <div class="col">
             <h1 class="text-center">test</h1>
-            <form action="/finish" method="POST">
+            <form action="/archivepost" method="POST">
                 <div class="checkbox">
-                    <label><input type="checkbox" name="todo" value=''>fgsr</label>
+                    <% for(var i = 0; i < archivedList.length; i++) {%>
+                    <div class="checkbox">
+                        <label><input type="checkbox" name="archive" value='<%= archivedList[i] %>'><%= archivedList[i] %></label>
+                    </div>
+                    <% } %>
                 </div>
 
-                <button type="submit" value="done" name="todoButton" class="btn btn-default">Mark selected items as done</button>
-                <button type="submit" value="delete" name="todoButton" class="btn btn-danger">Delete selected items</button>
+                <button type="submit" value="done" name="archiveButton" class="btn btn-default">Mark selected items as done</button>
+                <button type="submit" value="delete" name="archiveButton" class="btn btn-danger">Delete selected items</button>
 
             </form>
         </div>

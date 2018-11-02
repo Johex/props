@@ -16,6 +16,7 @@ const con = mysql.createConnection({
 });
 let todoList = [];
 let finishedList =[];
+let archivedList = [];
 
 router.get('/', function(req, res){
     res.render('index')
@@ -26,7 +27,7 @@ router.get('/todo', function(req, res){
     //get data from the database
     //get the not yet done to-do's
     todoList = [];
-    con.query("select * from todo WHERE done = 0", function (err, rows) {
+    con.query("select * from todo WHERE done = 0 AND archived = 0", function (err, rows) {
         if (err){
             console.log(err);
             return;
@@ -35,7 +36,7 @@ router.get('/todo', function(req, res){
             //console.log(result.todo, result.done);
             todoList.push(result.todo);
         });
-        con.query("select * from todo WHERE done = 1", function(err, rows) {
+        con.query("select * from todo WHERE done = 1 AND archived = 0", function(err, rows) {
             if (err){
                 console.log(err);
                 return;
@@ -77,16 +78,15 @@ router.post('/finish', function(req, res) {
     let finishedTodo = req.body.todo;
     let todoRight = req.body.todoRight;
     let doneDeleteArchive = req.body.todoButton;
-    let undoDelete = req.body.finishedButton;
+    let undoDeleteArchive = req.body.finishedButton;
     let move;
     let remove;
     let archive;
-    let okToRedirect
     //var for change finished in sql later setting it to one makes the item set to done and vice versa
     let finishOrUndo;
     //current status of the to-do 1 for done 0 for not done
     let currentTodoStatus;
-    console.log(doneDeleteArchive);
+    console.log(undoDeleteArchive);
 
 
 
@@ -115,21 +115,30 @@ router.post('/finish', function(req, res) {
     }
 
     //check for input in finished column
-    if (undoDelete == 'undo'){
+    if (undoDeleteArchive == 'undo'){
         move = true;
         remove = false;
-        archive = false
+        archive = false;
         finishOrUndo = 0;
         currentTodoStatus = 1;
-        moveOrDelete.moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus);
+        moveOrDelete.moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus, archive);
     }
-    else if (undoDelete == 'delete'){
+    else if (undoDeleteArchive == 'delete'){
         move = false;
         remove = true;
+        archive = false;
         finishOrUndo = 0;
         currentTodoStatus = 1;
-        moveOrDelete.moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus);
+        moveOrDelete.moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus, archive);
     }
+    else if (undoDeleteArchive == 'archive'){
+        move = false;
+        remove = false;
+        archive = true;
+        currentTodoStatus = 1;
+        moveOrDelete.moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus, archive);
+    }
+
     //wait for mysql db then redirect back to to-do
     (async () => {
         await delay(600);
@@ -139,8 +148,43 @@ router.post('/finish', function(req, res) {
 });
 
 router.get ('/archive', function (req, res) {
-    res.render('archive');
-})
+    archivedListList = [];
+    con.query("select * from todo WHERE archived = 1", function (err, rows) {
+        if (err){
+            console.log(err);
+            return;
+        }
+        rows.forEach(function(result) {
+            archivedList.push(result.todo);
+        });
+
+        res.render('archive', {archivedList: archivedList});
+        //console.log(archivedList);
+        archivedList = [];
+
+
+    });
+});
+
+router.post('/archivepost', function (req,res) {
+    let doneOrDelete = req.body.archiveButton;
+    let todoToUse = req.body.archive;
+    let move;
+    let remove;
+    let finishOrUndo;
+    let a
+    console.log(todoToUse);
+
+    if (doneOrDelete == 'delete'){
+        move = false;
+        remove = true;
+        finishOrUndo = 0;
+        moveOrDelete.moveOrDelete(todoToUse, move, remove, finishOrUndo,)
+    }
+});
+
+
+
 router.get('*', function (req, res) {
     res.send("<h1>This page does not exist</h1>");
     console.log('nonopage');
