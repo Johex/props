@@ -39,11 +39,14 @@
     <div class="row">
         <div class="col">
             <h1 class="text-center">test</h1>
+
             <form action="/archivepost" method="POST">
                 <div class="checkbox">
                     <% for(var i = 0; i < archivedList.length; i++) {%>
                     <div class="checkbox">
+                        <a href="#"  data-toggle="popover" data-trigger="hover" title="D``escription" data-content="<%= descriptionListArchive[i] %>">
                         <label><input type="checkbox" name="archive" value='<%= archivedList[i] %>'><%= archivedList[i] %></label>
+                        </a>
                     </div>
                     <% } %>
                 </div>

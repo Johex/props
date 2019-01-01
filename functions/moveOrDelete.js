@@ -1,6 +1,6 @@
 module.exports = {
 
-    moveOrDelete: function moveOrDelete(todoToUse, move, remove, finishOrUndo, currentStatus, archive) {
+    moveOrDelete: function moveOrDelete(todoToUse, move, remove, finishOrUndo, currentStatus, archive, unarchive) {
         const mysql = require('mysql');
         const con = mysql.createConnection({
             host: "35.234.124.218",
@@ -23,6 +23,11 @@ module.exports = {
         else if (archive == true){
             query = "UPDATE todo SET archived = 1 WHERE ID = '";
         }
+
+        //must item be unarchived?
+        else if (unarchive = true){
+            query = "UPDATE todo SET archived = 0 WHERE ID = '"
+        }
         //check if data is an array
         if (todoToUse instanceof Array){
             console.log('Array ___________________________________________');
@@ -38,7 +43,7 @@ module.exports = {
                     rows.forEach(function(result) {
                         toBeMoved = result.ID;
                         console.log(toBeMoved);
-                    })
+                    });
                     con.query(query + toBeMoved +"'", function(err) {
                         if (err){
                             console.log(err);

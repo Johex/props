@@ -17,6 +17,9 @@ const con = mysql.createConnection({
 let todoList = [];
 let finishedList =[];
 let archivedList = [];
+let descriptionListFinished = [];
+let descriptionListToDO = [];
+let descriptionListArchive = [];
 
 router.get('/', function(req, res){
     res.render('index')
@@ -27,14 +30,15 @@ router.get('/todo', function(req, res){
     //get data from the database
     //get the not yet done to-do's
     todoList = [];
+
     con.query("select * from todo WHERE done = 0 AND archived = 0", function (err, rows) {
         if (err){
             console.log(err);
             return;
         }
         rows.forEach(function(result) {
-            //console.log(result.todo, result.done);
             todoList.push(result.todo);
+            descriptionListToDO.push(result.description);
         });
         con.query("select * from todo WHERE done = 1 AND archived = 0", function(err, rows) {
             if (err){
@@ -43,11 +47,13 @@ router.get('/todo', function(req, res){
             }
             rows.forEach(function(result) {
                 finishedList.push(result.todo);
-                //console.log(result.todo, result.done);
-            })
-            res.render('todo', {todoList: todoList, finishedList: finishedList});
+                descriptionListFinished.push(result.description);
+            });
+            res.render('todo', {todoList: todoList, finishedList: finishedList, descriptionListToDo:descriptionListToDO, descriptionListFinished:descriptionListFinished});
             todoList = [];
             finishedList = [];
+            descriptionListToDO = [];
+            descriptionListFinished = [];
         })
 
     });
@@ -58,9 +64,11 @@ router.get('/todo', function(req, res){
 router.post('/newtodo', function(req, res) {
     console.log("item submitted");
     var item = req.body.item;
+    let description = req.body.description;
+    console.log(description);
     todoList.push(item);
     //inserted the to-do in the database
-    con.query("INSERT INTO todo (todo, done) VALUES ('"+item+"', 0)", function(err) {
+    con.query("INSERT INTO todo (todo, done, description) VALUES ('"+item+"', 0, '"+description+"')", function(err) {
         if (err){
             console.log(err);
             return;
@@ -156,11 +164,13 @@ router.get ('/archive', function (req, res) {
         }
         rows.forEach(function(result) {
             archivedList.push(result.todo);
+            descriptionListArchive.push(result.description);
         });
 
-        res.render('archive', {archivedList: archivedList});
+        res.render('archive', {archivedList: archivedList, descriptionListArchive:descriptionListArchive});
         //console.log(archivedList);
         archivedList = [];
+        descriptionListArchive = [];
 
 
     });
@@ -172,15 +182,35 @@ router.post('/archivepost', function (req,res) {
     let move;
     let remove;
     let finishOrUndo;
-    let a
+    let archive;
+    let currentTodoStatus;
+    let unarchive;
     console.log(todoToUse);
 
+    // delete if so desired
     if (doneOrDelete == 'delete'){
         move = false;
         remove = true;
         finishOrUndo = 0;
-        moveOrDelete.moveOrDelete(todoToUse, move, remove, finishOrUndo,)
+        archive = false;
+        currentTodoStatus = 1;
+        moveOrDelete.moveOrDelete(todoToUse, move, remove, finishOrUndo, currentTodoStatus, archive)
     }
+
+    if (doneOrDelete == 'done'){
+        move = false;
+        remove = false;
+        finishOrUndo = 1;
+        archive = false;
+        currentTodoStatus = 1;
+        unarchive = true;
+        moveOrDelete.moveOrDelete(todoToUse, move, remove, finishOrUndo, currentTodoStatus, archive, unarchive);
+    }
+
+    (async () => {
+        await delay(600);
+        res.redirect('/archive');
+    })();
 });
 
 
