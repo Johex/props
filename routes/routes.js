@@ -8,6 +8,7 @@ const delay = require('delay');
 //const archive = require('Y:\\6\\Informatics\\pws\\props\\functions/archive.js');
 
 
+
 const con = mysql.createConnection({
     host: "35.234.124.218",
     user: "root",
@@ -20,6 +21,12 @@ let archivedList = [];
 let descriptionListFinished = [];
 let descriptionListToDO = [];
 let descriptionListArchive = [];
+let dateAddedDone = [];
+let dateAddedFinished = [];
+let dateFinished = [];
+let dateFinishedArchive = [];
+let dateAddedArchive = [];
+let dateArchived = [];
 
 router.get('/', function(req, res){
     res.render('index')
@@ -31,7 +38,7 @@ router.get('/todo', function(req, res){
     //get the not yet done to-do's
     todoList = [];
 
-    con.query("select * from todo WHERE done = 0 AND archived = 0", function (err, rows) {
+    con.query("select todo, description, DATE_FORMAT(`dateAdded`, '%Y-%m-%d %H:%i') AS `formatted_date` from todo WHERE done = 0 AND archived = 0 ORDER BY dateAdded ASC", function (err, rows) {
         if (err){
             console.log(err);
             return;
@@ -39,8 +46,10 @@ router.get('/todo', function(req, res){
         rows.forEach(function(result) {
             todoList.push(result.todo);
             descriptionListToDO.push(result.description);
+            dateAddedDone.push(result.formatted_date);
+
         });
-        con.query("select * from todo WHERE done = 1 AND archived = 0", function(err, rows) {
+        con.query("select todo, description, DATE_FORMAT(`dateAdded`, '%Y-%m-%d %H:%i') AS `formatted_dateAdded`, DATE_FORMAT(`dateFinished`, '%Y-%m-%d %H:%i') AS `formatted_dateFinished` from todo WHERE done = 1 AND archived = 0 ORDER BY dateFinished ASC", function(err, rows) {
             if (err){
                 console.log(err);
                 return;
@@ -48,12 +57,16 @@ router.get('/todo', function(req, res){
             rows.forEach(function(result) {
                 finishedList.push(result.todo);
                 descriptionListFinished.push(result.description);
+                dateAddedFinished.push(result.formatted_dateAdded);
+                dateFinished.push(result.formatted_dateFinished);
             });
-            res.render('todo', {todoList: todoList, finishedList: finishedList, descriptionListToDo:descriptionListToDO, descriptionListFinished:descriptionListFinished});
+            res.render('todo', {todoList: todoList, finishedList: finishedList, descriptionListToDo:descriptionListToDO, descriptionListFinished:descriptionListFinished, dateAddedDone:dateAddedDone, dateAddedFinished:dateAddedFinished, dateFinished:dateFinished});
             todoList = [];
             finishedList = [];
             descriptionListToDO = [];
             descriptionListFinished = [];
+            dateAddedDone = [];
+            dateFinished = [];
         })
 
     });
@@ -97,7 +110,7 @@ router.post('/finish', function(req, res) {
     console.log(undoDeleteArchive);
 
 
-
+    //todo delete archive function
     // check if user want to delete or mark done
     if (doneDeleteArchive == 'done'){
         move = true;
@@ -156,8 +169,8 @@ router.post('/finish', function(req, res) {
 });
 
 router.get ('/archive', function (req, res) {
-    archivedListList = [];
-    con.query("select * from todo WHERE archived = 1", function (err, rows) {
+    archivedList = [];
+    con.query("SELECT todo, description, DATE_FORMAT(`dateAdded`, '%Y-%m-%d %H:%i') AS `formatted_dateAdded`, DATE_FORMAT(`dateFinished`, '%Y-%m-%d %H:%i') AS `formatted_dateFinished`, DATE_FORMAT(`dateArchived`, '%Y-%m-%d %H:%i') AS `formatted_dateArchived` from todo WHERE archived = 1 ORDER BY dateArchived ASC", function (err, rows) {
         if (err){
             console.log(err);
             return;
@@ -165,12 +178,18 @@ router.get ('/archive', function (req, res) {
         rows.forEach(function(result) {
             archivedList.push(result.todo);
             descriptionListArchive.push(result.description);
+            dateAddedArchive.push(result.formatted_dateAdded);
+            dateFinishedArchive.push(result.formatted_dateFinished);
+            dateArchived.push(result.formatted_dateArchived);
         });
 
-        res.render('archive', {archivedList: archivedList, descriptionListArchive:descriptionListArchive});
+        res.render('archive', {archivedList: archivedList, descriptionListArchive:descriptionListArchive, dateAddedArchive:dateAddedArchive, dateFinishedArchive:dateFinishedArchive, dateArchived:dateArchived});
         //console.log(archivedList);
         archivedList = [];
         descriptionListArchive = [];
+        dateAddedArchive = [];
+        dateFinishedArchive = [];
+        dateArchived = [];
 
 
     });
