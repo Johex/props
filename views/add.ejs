@@ -39,20 +39,22 @@
     <div class="row">
         <div class="col">
             <h1 class="text-center">test</h1>
-
-            <form action="/archivepost" method="POST">
-                <div class="checkbox">
-                    <% for(var i = 0; i < archivedList.length; i++) {%>
-                    <div class="checkbox">
-                        <a href="#"  data-toggle="popover" data-trigger="hover" data-html="true" title="Description" data-content="Date added: <%= dateAddedArchive[i]%><br /> Date finished: <%= dateFinishedArchive[i]%><br /> Date archived: <%= dateArchived[i]%><br /><%= descriptionListArchive[i] %>">
-                        <label><input type="checkbox" name="archive" value='<%= archivedList[i] %>'><%= archivedList[i] %></label>
-                        </a>
-                    </div>
-                    <% } %>
+            <form action="/newtotable" method="POST">
+                <div class="form-group">
+                    <label for="addTable">Add a new list:</label>
+                    <input type="text" class="form-control" name="addTable" required>
                 </div>
-
-                <button type="submit" value="done" name="archiveButton" class="btn btn-default">Mark selected items as done</button>
-                <button type="submit" value="delete" name="archiveButton" class="btn btn-danger">Delete selected items</button>
+            <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+            <br><br>
+            <form action="/usetable" method="POST">
+                <% for(var i = 0; i < tableList.length; i++) {%>
+                <div class="radio">
+                    <label><input type="radio" name='radioTable' value="<%= tableList[i] %>"><%= tableList[i] %></label>
+                </div>
+                <% }%>
+                <button type="submit" value="use" name="archiveButton" class="btn btn-default">Use</button>
+                <button type="submit" value="delete" name="archiveButton" class="btn btn-danger">Delete</button>
 
             </form>
         </div>

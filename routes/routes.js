@@ -28,6 +28,9 @@ let dateFinishedArchive = [];
 let dateAddedArchive = [];
 let dateArchived = [];
 
+let tableList = [];
+let databaseToUse;
+
 router.get('/', function(req, res){
     res.render('index')
 });
@@ -90,7 +93,7 @@ router.post('/newtodo', function(req, res) {
         res.redirect("/todo");
     })
 
-})
+});
 
 
 
@@ -232,7 +235,54 @@ router.post('/archivepost', function (req,res) {
     })();
 });
 
+router.get('/add', function(req, res){
 
+    let newTableName;
+    const getTablesQuery = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA='app' "
+
+    con.query(getTablesQuery, function (err, rows) {
+        if (err){
+            console.log(err);
+            return;
+        }
+        rows.forEach(function (result) {
+            tableList.push(result.TABLE_NAME);
+            console.log(tableList[0]);
+        })
+    });
+    (async () => {
+        await delay(170);
+        res.render('add', {tableList:tableList});
+        tableList = [];
+    })();
+
+});
+
+router.post('/newtotable', function(req, res) {
+  let tableToAdd = req.body.addTable;
+  console.log(tableToAdd);
+  let queryNewTable = "CREATE TABLE `"+ tableToAdd + "` (\n" +
+      "\t`ID` INT(11) NOT NULL AUTO_INCREMENT,\n" +
+      "\t`todo` TEXT NULL,\n" +
+      "\t`done` BIT(1) NULL DEFAULT NULL,\n" +
+      "\t`dateAdded` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,\n" +
+      "\t`dateFinished` DATETIME NULL DEFAULT NULL,\n" +
+      "\t`dateArchived` DATETIME NULL DEFAULT NULL,\n" +
+      "\t`archived` BIT(1) NULL DEFAULT b'0',\n" +
+      "\t`description` TEXT NULL,\n" +
+      "\tPRIMARY KEY (`ID`)\n" +
+      ")\n" +
+      "COLLATE='latin1_swedish_ci'\n" +
+      "ENGINE=InnoDB\n" +
+      "AUTO_INCREMENT=118\n" +
+      ";\n";
+  con.query(queryNewTable);
+
+    (async () => {
+        await delay(500);
+        res.redirect('/add');
+    })();
+});
 
 router.get('*', function (req, res) {
     res.send("<h1>This page does not exist</h1>");
