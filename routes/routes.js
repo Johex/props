@@ -41,7 +41,7 @@ router.get('/todo', function(req, res){
     //get the not yet done to-do's
     todoList = [];
 
-    con.query("select todo, description, DATE_FORMAT(`dateAdded`, '%Y-%m-%d %H:%i') AS `formatted_date` from "+ tableToUse +" WHERE done = 0 AND archived = 0 ORDER BY dateAdded ASC", function (err, rows) {
+    con.query("select todo, description, DATE_FORMAT(`dateAdded`, '%Y-%m-%d %H:%i') AS `formatted_date` from `"+ tableToUse +"` WHERE done = 0 AND archived = 0 ORDER BY dateAdded ASC", function (err, rows) {
         if (err){
             console.log(err);
             return;
@@ -52,7 +52,7 @@ router.get('/todo', function(req, res){
             dateAddedDone.push(result.formatted_date);
 
         });
-        con.query("select todo, description, DATE_FORMAT(`dateAdded`, '%Y-%m-%d %H:%i') AS `formatted_dateAdded`, DATE_FORMAT(`dateFinished`, '%Y-%m-%d %H:%i') AS `formatted_dateFinished` from "+ tableToUse +" WHERE done = 1 AND archived = 0 ORDER BY dateFinished ASC", function(err, rows) {
+        con.query("select todo, description, DATE_FORMAT(`dateAdded`, '%Y-%m-%d %H:%i') AS `formatted_dateAdded`, DATE_FORMAT(`dateFinished`, '%Y-%m-%d %H:%i') AS `formatted_dateFinished` from `"+ tableToUse +"` WHERE done = 1 AND archived = 0 ORDER BY dateFinished ASC", function(err, rows) {
             if (err){
                 console.log(err);
                 return;
@@ -84,7 +84,7 @@ router.post('/newtodo', function(req, res) {
     console.log(description);
     todoList.push(item);
     //inserted the to-do in the database
-    con.query("INSERT INTO "+ tableToUse + " (todo, done, description) VALUES ('"+item+"', 0, '"+description+"')", function(err) {
+    con.query('INSERT INTO `'+ tableToUse + '` (todo, done, description) VALUES ("'+item+'", 0, "'+description+'")', function(err) {
         if (err){
             console.log(err);
             return;
@@ -174,7 +174,7 @@ router.post('/finish', function(req, res) {
 
 router.get ('/archive', function (req, res) {
     archivedList = [];
-    con.query("SELECT todo, description, DATE_FORMAT(`dateAdded`, '%Y-%m-%d %H:%i') AS `formatted_dateAdded`, DATE_FORMAT(`dateFinished`, '%Y-%m-%d %H:%i') AS `formatted_dateFinished`, DATE_FORMAT(`dateArchived`, '%Y-%m-%d %H:%i') AS `formatted_dateArchived` from "+ tableToUse +" WHERE archived = 1 ORDER BY dateArchived ASC", function (err, rows) {
+    con.query("SELECT todo, description, DATE_FORMAT(`dateAdded`, '%Y-%m-%d %H:%i') AS `formatted_dateAdded`, DATE_FORMAT(`dateFinished`, '%Y-%m-%d %H:%i') AS `formatted_dateFinished`, DATE_FORMAT(`dateArchived`, '%Y-%m-%d %H:%i') AS `formatted_dateArchived` from `"+ tableToUse +"` WHERE archived = 1 ORDER BY dateArchived ASC", function (err, rows) {
         if (err){
             console.log(err);
             return;

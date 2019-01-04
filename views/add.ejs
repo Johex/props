@@ -50,7 +50,7 @@
             <form action="/usetable" method="POST">
                 <% for(var i = 0; i < tableList.length; i++) {%>
                 <div class="radio">
-                    <label><input type="radio" name='radioTable' value="<%= tableList[i] %>"><%= tableList[i] %></label>
+                    <label><input type="radio" name='radioTable' value="<%= tableList[i] %>" required><%= tableList[i] %></label>
                 </div>
                 <% }%>
                 <button type="submit" value="use" name="useDeleteButton" class="btn btn-default">Use</button>

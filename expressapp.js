@@ -17,7 +17,8 @@ app.set('views', path.join(__dirname, 'views'));
 
 //body parser middleware
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({limit: '5mb',extended: true}));
+
 
 
 //set static path
