@@ -29,7 +29,7 @@ let dateAddedArchive = [];
 let dateArchived = [];
 
 let tableList = [];
-let databaseToUse;
+let tableToUse = "todo";
 
 router.get('/', function(req, res){
     res.render('index')
@@ -41,7 +41,7 @@ router.get('/todo', function(req, res){
     //get the not yet done to-do's
     todoList = [];
 
-    con.query("select todo, description, DATE_FORMAT(`dateAdded`, '%Y-%m-%d %H:%i') AS `formatted_date` from todo WHERE done = 0 AND archived = 0 ORDER BY dateAdded ASC", function (err, rows) {
+    con.query("select todo, description, DATE_FORMAT(`dateAdded`, '%Y-%m-%d %H:%i') AS `formatted_date` from "+ tableToUse +" WHERE done = 0 AND archived = 0 ORDER BY dateAdded ASC", function (err, rows) {
         if (err){
             console.log(err);
             return;
@@ -52,7 +52,7 @@ router.get('/todo', function(req, res){
             dateAddedDone.push(result.formatted_date);
 
         });
-        con.query("select todo, description, DATE_FORMAT(`dateAdded`, '%Y-%m-%d %H:%i') AS `formatted_dateAdded`, DATE_FORMAT(`dateFinished`, '%Y-%m-%d %H:%i') AS `formatted_dateFinished` from todo WHERE done = 1 AND archived = 0 ORDER BY dateFinished ASC", function(err, rows) {
+        con.query("select todo, description, DATE_FORMAT(`dateAdded`, '%Y-%m-%d %H:%i') AS `formatted_dateAdded`, DATE_FORMAT(`dateFinished`, '%Y-%m-%d %H:%i') AS `formatted_dateFinished` from "+ tableToUse +" WHERE done = 1 AND archived = 0 ORDER BY dateFinished ASC", function(err, rows) {
             if (err){
                 console.log(err);
                 return;
@@ -84,7 +84,7 @@ router.post('/newtodo', function(req, res) {
     console.log(description);
     todoList.push(item);
     //inserted the to-do in the database
-    con.query("INSERT INTO todo (todo, done, description) VALUES ('"+item+"', 0, '"+description+"')", function(err) {
+    con.query("INSERT INTO "+ tableToUse + " (todo, done, description) VALUES ('"+item+"', 0, '"+description+"')", function(err) {
         if (err){
             console.log(err);
             return;
@@ -114,6 +114,7 @@ router.post('/finish', function(req, res) {
 
 
     //todo delete archive function
+    // todo function call can be outsite if statement
     // check if user want to delete or mark done
     if (doneDeleteArchive == 'done'){
         move = true;
@@ -121,21 +122,21 @@ router.post('/finish', function(req, res) {
         archive = false;
         finishOrUndo = 1;
         currentTodoStatus = 0;
-        moveOrDelete.moveOrDelete(finishedTodo, move, remove, finishOrUndo, currentTodoStatus, archive);
+        moveOrDelete.moveOrDelete(finishedTodo, move, remove, finishOrUndo, currentTodoStatus, archive, false, tableToUse);
     }
     else if (doneDeleteArchive == 'delete'){
         move = false;
         remove = true;
         archive = false;
         currentTodoStatus = 0;
-        moveOrDelete.moveOrDelete(finishedTodo, move, remove, 0, currentTodoStatus, archive)
+        moveOrDelete.moveOrDelete(finishedTodo, move, remove, 0, currentTodoStatus, archive, false, tableToUse);
     }
     else if (doneDeleteArchive == 'archive'){
         move = false;
         remove = false;
         archive = true;
         currentTodoStatus = 0;
-        moveOrDelete.moveOrDelete(finishedTodo, move, remove, 0, currentTodoStatus, archive)
+        moveOrDelete.moveOrDelete(finishedTodo, move, remove, 0, currentTodoStatus, archive, false, tableToUse);
     }
 
     //check for input in finished column
@@ -145,7 +146,7 @@ router.post('/finish', function(req, res) {
         archive = false;
         finishOrUndo = 0;
         currentTodoStatus = 1;
-        moveOrDelete.moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus, archive);
+        moveOrDelete.moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus, archive, false, tableToUse);
     }
     else if (undoDeleteArchive == 'delete'){
         move = false;
@@ -153,14 +154,14 @@ router.post('/finish', function(req, res) {
         archive = false;
         finishOrUndo = 0;
         currentTodoStatus = 1;
-        moveOrDelete.moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus, archive);
+        moveOrDelete.moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus, archive, false, tableToUse);
     }
     else if (undoDeleteArchive == 'archive'){
         move = false;
         remove = false;
         archive = true;
         currentTodoStatus = 1;
-        moveOrDelete.moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus, archive);
+        moveOrDelete.moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus, archive, false, tableToUse);
     }
 
     //wait for mysql db then redirect back to to-do
@@ -173,7 +174,7 @@ router.post('/finish', function(req, res) {
 
 router.get ('/archive', function (req, res) {
     archivedList = [];
-    con.query("SELECT todo, description, DATE_FORMAT(`dateAdded`, '%Y-%m-%d %H:%i') AS `formatted_dateAdded`, DATE_FORMAT(`dateFinished`, '%Y-%m-%d %H:%i') AS `formatted_dateFinished`, DATE_FORMAT(`dateArchived`, '%Y-%m-%d %H:%i') AS `formatted_dateArchived` from todo WHERE archived = 1 ORDER BY dateArchived ASC", function (err, rows) {
+    con.query("SELECT todo, description, DATE_FORMAT(`dateAdded`, '%Y-%m-%d %H:%i') AS `formatted_dateAdded`, DATE_FORMAT(`dateFinished`, '%Y-%m-%d %H:%i') AS `formatted_dateFinished`, DATE_FORMAT(`dateArchived`, '%Y-%m-%d %H:%i') AS `formatted_dateArchived` from "+ tableToUse +" WHERE archived = 1 ORDER BY dateArchived ASC", function (err, rows) {
         if (err){
             console.log(err);
             return;
@@ -216,7 +217,7 @@ router.post('/archivepost', function (req,res) {
         finishOrUndo = 0;
         archive = false;
         currentTodoStatus = 1;
-        moveOrDelete.moveOrDelete(todoToUse, move, remove, finishOrUndo, currentTodoStatus, archive)
+        moveOrDelete.moveOrDelete(todoToUse, move, remove, finishOrUndo, currentTodoStatus, archive, false, tableToUse)
     }
 
     if (doneOrDelete == 'done'){
@@ -226,7 +227,7 @@ router.post('/archivepost', function (req,res) {
         archive = false;
         currentTodoStatus = 1;
         unarchive = true;
-        moveOrDelete.moveOrDelete(todoToUse, move, remove, finishOrUndo, currentTodoStatus, archive, unarchive);
+        moveOrDelete.moveOrDelete(todoToUse, move, remove, finishOrUndo, currentTodoStatus, archive, unarchive, tableToUse);
     }
 
     (async () => {
@@ -247,7 +248,7 @@ router.get('/add', function(req, res){
         }
         rows.forEach(function (result) {
             tableList.push(result.TABLE_NAME);
-            console.log(tableList[0]);
+            // console.log(tableList[0]);
         })
     });
     (async () => {
@@ -259,9 +260,11 @@ router.get('/add', function(req, res){
 });
 
 router.post('/newtotable', function(req, res) {
-  let tableToAdd = req.body.addTable;
-  console.log(tableToAdd);
-  let queryNewTable = "CREATE TABLE `"+ tableToAdd + "` (\n" +
+    //get table name from form
+    let tableToAdd = req.body.addTable;
+
+  //query to add new table
+    let queryNewTable = "CREATE TABLE `"+ tableToAdd + "` (\n" +
       "\t`ID` INT(11) NOT NULL AUTO_INCREMENT,\n" +
       "\t`todo` TEXT NULL,\n" +
       "\t`done` BIT(1) NULL DEFAULT NULL,\n" +
@@ -274,15 +277,40 @@ router.post('/newtotable', function(req, res) {
       ")\n" +
       "COLLATE='latin1_swedish_ci'\n" +
       "ENGINE=InnoDB\n" +
-      "AUTO_INCREMENT=118\n" +
+      "AUTO_INCREMENT=0\n" +
       ";\n";
-  con.query(queryNewTable);
+  // execute cet query
+    con.query(queryNewTable);
 
     (async () => {
         await delay(500);
         res.redirect('/add');
     })();
 });
+
+router.post('/usetable', function (req, res) {
+    //get the tabel name to delete/use
+    let tableToUseOrDelete = req.body.radioTable;
+    // query to drop the table
+    const queryToDelete = "DROP TABLE `" + tableToUseOrDelete + "`";
+
+    //get if need to delete or use
+    let useOrDelete = req.body.useDeleteButton;
+
+    if (useOrDelete === 'delete'){
+        con.query(queryToDelete);
+    }
+
+    else if (useOrDelete === 'use'){
+        tableToUse = tableToUseOrDelete;
+    }
+
+
+    (async () => {
+        await delay(500);
+        res.redirect('/add');
+    })();
+})
 
 router.get('*', function (req, res) {
     res.send("<h1>This page does not exist</h1>");
