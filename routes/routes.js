@@ -4,6 +4,7 @@ const router = express.Router();
 const mysql = require('mysql');
 const path = require('path');
 const moveOrDelete = require('Y:\\6\\Informatics\\pws\\props\\functions\\moveOrDelete.js');
+const cookieParser = require('cookie-parser');
 const delay = require('delay');
 //const archive = require('Y:\\6\\Informatics\\pws\\props\\functions/archive.js');
 
@@ -28,6 +29,8 @@ let dateFinishedArchive = [];
 let dateAddedArchive = [];
 let dateArchived = [];
 
+let tableToUseOrDelete;
+
 let tableList = [];
 let tableToUse = "todo";
 
@@ -40,6 +43,8 @@ router.get('/todo', function(req, res){
     //get data from the database
     //get the not yet done to-do's
     todoList = [];
+    console.log(req.cookies['tableToUse']);
+    tableToUse = req.cookies['tableToUse'];
 
     con.query("select todo, description, DATE_FORMAT(`dateAdded`, '%Y-%m-%d %H:%i') AS `formatted_date` from `"+ tableToUse +"` WHERE done = 0 AND archived = 0 ORDER BY dateAdded ASC", function (err, rows) {
         if (err){
@@ -63,7 +68,7 @@ router.get('/todo', function(req, res){
                 dateAddedFinished.push(result.formatted_dateAdded);
                 dateFinished.push(result.formatted_dateFinished);
             });
-            res.render('todo', {todoList: todoList, finishedList: finishedList, descriptionListToDo:descriptionListToDO, descriptionListFinished:descriptionListFinished, dateAddedDone:dateAddedDone, dateAddedFinished:dateAddedFinished, dateFinished:dateFinished});
+            res.render('todo', {todoList: todoList, finishedList: finishedList, descriptionListToDo:descriptionListToDO, descriptionListFinished:descriptionListFinished, dateAddedDone:dateAddedDone, dateAddedFinished:dateAddedFinished, dateFinished:dateFinished, tableToUse:tableToUse});
             todoList = [];
             finishedList = [];
             descriptionListToDO = [];
@@ -78,6 +83,7 @@ router.get('/todo', function(req, res){
 
 // submit route
 router.post('/newtodo', function(req, res) {
+    tableToUse = req.cookies['tableToUse'];
     console.log("item submitted");
     var item = req.body.item;
     let description = req.body.description;
@@ -98,6 +104,7 @@ router.post('/newtodo', function(req, res) {
 
 
 router.post('/finish', function(req, res) {
+    tableToUse = req.cookies['tableToUse'];
     //finish.finish();
     let finishedTodo = req.body.todo;
     let todoRight = req.body.todoRight;
@@ -173,6 +180,7 @@ router.post('/finish', function(req, res) {
 });
 
 router.get ('/archive', function (req, res) {
+    tableToUse = req.cookies['tableToUse'];
     archivedList = [];
     con.query("SELECT todo, description, DATE_FORMAT(`dateAdded`, '%Y-%m-%d %H:%i') AS `formatted_dateAdded`, DATE_FORMAT(`dateFinished`, '%Y-%m-%d %H:%i') AS `formatted_dateFinished`, DATE_FORMAT(`dateArchived`, '%Y-%m-%d %H:%i') AS `formatted_dateArchived` from `"+ tableToUse +"` WHERE archived = 1 ORDER BY dateArchived ASC", function (err, rows) {
         if (err){
@@ -200,6 +208,7 @@ router.get ('/archive', function (req, res) {
 });
 
 router.post('/archivepost', function (req,res) {
+    tableToUse = req.cookies['tableToUse'];
     let doneOrDelete = req.body.archiveButton;
     let todoToUse = req.body.archive;
     let move;
@@ -237,6 +246,7 @@ router.post('/archivepost', function (req,res) {
 });
 
 router.get('/add', function(req, res){
+    tableToUse = req.cookies['tableToUse'];
 
     let newTableName;
     const getTablesQuery = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA='app' "
@@ -260,6 +270,7 @@ router.get('/add', function(req, res){
 });
 
 router.post('/newtotable', function(req, res) {
+    tableToUse = req.cookies['tableToUse'];
     //get table name from form
     let tableToAdd = req.body.addTable;
 
@@ -289,28 +300,41 @@ router.post('/newtotable', function(req, res) {
 });
 
 router.post('/usetable', function (req, res) {
+    tableToUse = req.cookies['tableToUse'];
     //get the tabel name to delete/use
-    let tableToUseOrDelete = req.body.radioTable;
+    tableToUseOrDelete = req.body.radioTable;
     // query to drop the table
     const queryToDelete = "DROP TABLE `" + tableToUseOrDelete + "`";
+
+    res.clearCookie('tableToUse');
 
     //get if need to delete or use
     let useOrDelete = req.body.useDeleteButton;
 
     if (useOrDelete === 'delete'){
         con.query(queryToDelete);
+            (async () => {
+                await delay(500);
+                res.redirect('/add');
+            })();
     }
 
     else if (useOrDelete === 'use'){
-        tableToUse = tableToUseOrDelete;
+        res.cookie('tableToUse', tableToUseOrDelete);
+
+        (async () => {
+            await delay(500);
+            console.log(req.cookies['tableToUse']);
+            tableToUse = req.cookies['tableToUse'];
+            res.redirect('/todo');
+        })();
     }
 
 
-    (async () => {
-        await delay(500);
-        res.redirect('/add');
-    })();
-})
+
+});
+
+
 
 router.get('*', function (req, res) {
     res.send("<h1>This page does not exist</h1>");

@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const path = require('path');
 const port = 3000;
 
@@ -19,7 +20,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({limit: '5mb',extended: true}));
 
-
+app.use(cookieParser());
 
 //set static path
 app.use(express.static(path.join(__dirname, 'public')));

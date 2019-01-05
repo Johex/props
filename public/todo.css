@@ -3,13 +3,14 @@ body {
 }
 .background {
     /* The image used */
-    background-image: url("https://storage.googleapis.com/matisse/afbeeldingen/onaangepast_Caribische_strand_St_Maarten.jpg");
-
     /* Full height */
     height: 100%;
 
     /* Center and scale the image nicely */
-    background-position: center;
-    background-repeat: no-repeat;
+    background: url("https://storage.googleapis.com/matisse/afbeeldingen/onaangepast_Caribische_strand_St_Maarten.jpg") no-repeat center;
     background-size: cover;
+}
+
+a {
+    color: dimgray;
 }

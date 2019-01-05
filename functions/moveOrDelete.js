@@ -71,7 +71,7 @@ module.exports = {
                 rows.forEach(function(result) {
                     toBeMoved = result.ID;
                     console.log(toBeMoved + 'testtest');
-                })
+                });
                 con.query(query + toBeMoved + "'", function(err) {
                     if (err){
                         console.log(err);

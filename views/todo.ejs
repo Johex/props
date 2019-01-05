@@ -35,7 +35,7 @@
 
 </nav>
 
-<h1 class="text-center">Todo App Page</h1><br><br>
+<h1 class="text-center"><%= tableToUse %></h1><br><br>
 <div class="container">
     <div class="row">
         <div class="col-md-6">
@@ -57,7 +57,6 @@
             </form><br><br>
 
             <!--list of the items-->
-
             <form action="/finish" method="POST">
                 <% for(var i = 0; i < todoList.length; i++) {%>
                 <div class="checkbox">

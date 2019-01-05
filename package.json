@@ -173,6 +173,7 @@
       "resolved": "https://registry.npmjs.org/cookie/-/cookie-0.3.1.tgz",
       "version": "0.3.1"
     },
+    "cookie-parser": "^1.4.3",
     "cookie-signature": {
       "integrity": "sha1-4wOogrNCzD7oylE6eZmXNNqzriw=",
       "resolved": "https://registry.npmjs.org/cookie-signature/-/cookie-signature-1.0.6.tgz",
