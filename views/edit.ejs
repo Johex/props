@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://storage.googleapis.com/matisse/style/bootstrap.min.css">
+    <script src="https://storage.googleapis.com/matisse/style/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://storage.googleapis.com/matisse/style/popper.min.js"></script>
+    <script src="https://storage.googleapis.com/matisse/style/bootstrap.min.js"></script>
+    <title>Hello, world!</title>
+</head>
+<body>
+
+<form action="/updateTodo" method="POST">
+<div class="form-group">
+    <label for="ToDo">Edit TODO:</label>
+    <input type="text" class="form-control" id="todo" name="item" value="<%= todo %>" required>
+</div>
+<div class="form-group">
+    <label for="ToDoDescription">Edit description:</label>
+    <textarea type="text" class="form-control" id="todoDescription" name="description" required><%= desc %></textarea>
+</div>
+<button type="submit" class="btn btn-default">Submit</button>
+<!--todo no breaks-->
+</form><br><br>
+
+
+
+<!--Enable popover-->
+<script>
+    $(document).ready(function(){
+        $('[data-toggle="popover"]').popover();
+    });
+</script>
+
+</body>
+</html>

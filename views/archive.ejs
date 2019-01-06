@@ -35,11 +35,9 @@
 
 <!--archived list-->
 <div class="container">
-    <h1 class="text-center">Archived todos</h1>
+    <h1 class="text-center">Archive: <%= tableToUse%></h1>
     <div class="row">
         <div class="col">
-            <h1 class="text-center">test</h1>
-
             <form action="/archivepost" method="POST">
                 <div class="checkbox">
                     <% for(var i = 0; i < archivedList.length; i++) {%>

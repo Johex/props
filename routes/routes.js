@@ -32,7 +32,7 @@ let dateArchived = [];
 let tableToUseOrDelete;
 
 let tableList = [];
-let tableToUse = "todo";
+let tableToUse;
 
 router.get('/', function(req, res){
     res.render('index')
@@ -46,7 +46,11 @@ router.get('/todo', function(req, res){
     console.log(req.cookies['tableToUse']);
     tableToUse = req.cookies['tableToUse'];
 
-    con.query("select todo, description, DATE_FORMAT(`dateAdded`, '%Y-%m-%d %H:%i') AS `formatted_date` from `"+ tableToUse +"` WHERE done = 0 AND archived = 0 ORDER BY dateAdded ASC", function (err, rows) {
+    if (tableToUse == null){
+        tableToUse = 'todo';
+    }
+
+    con.query("select todo, description, DATE_FORMAT(`dateAdded`, '%Y-%m-%d %H:%i') AS `formatted_date` from `"+ tableToUse +"` WHERE done = 0 AND archived = 0 ORDER BY dateAdded DESC", function (err, rows) {
         if (err){
             console.log(err);
             return;
@@ -57,7 +61,7 @@ router.get('/todo', function(req, res){
             dateAddedDone.push(result.formatted_date);
 
         });
-        con.query("select todo, description, DATE_FORMAT(`dateAdded`, '%Y-%m-%d %H:%i') AS `formatted_dateAdded`, DATE_FORMAT(`dateFinished`, '%Y-%m-%d %H:%i') AS `formatted_dateFinished` from `"+ tableToUse +"` WHERE done = 1 AND archived = 0 ORDER BY dateFinished ASC", function(err, rows) {
+        con.query("select todo, description, DATE_FORMAT(`dateAdded`, '%Y-%m-%d %H:%i') AS `formatted_dateAdded`, DATE_FORMAT(`dateFinished`, '%Y-%m-%d %H:%i') AS `formatted_dateFinished` from `"+ tableToUse +"` WHERE done = 1 AND archived = 0 ORDER BY dateFinished DESC", function(err, rows) {
             if (err){
                 console.log(err);
                 return;
@@ -102,17 +106,19 @@ router.post('/newtodo', function(req, res) {
 });
 
 
-
+let finishedTodo;
+let doneDeleteArchive;
 router.post('/finish', function(req, res) {
     tableToUse = req.cookies['tableToUse'];
     //finish.finish();
-    let finishedTodo = req.body.todo;
+    finishedTodo = req.body.todo;
     let todoRight = req.body.todoRight;
-    let doneDeleteArchive = req.body.todoButton;
+    doneDeleteArchive = req.body.todoButton;
     let undoDeleteArchive = req.body.finishedButton;
     let move;
     let remove;
     let archive;
+    let redToTodo = 1;
     //var for change finished in sql later setting it to one makes the item set to done and vice versa
     let finishOrUndo;
     //current status of the to-do 1 for done 0 for not done
@@ -171,17 +177,32 @@ router.post('/finish', function(req, res) {
         moveOrDelete.moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus, archive, false, tableToUse);
     }
 
+    else {
+        res.redirect('/editGet');
+        redToTodo = 0
+    }
+
     //wait for mysql db then redirect back to to-do
-    (async () => {
-        await delay(600);
-        res.redirect('/todo');
-    })();
+    switch (redToTodo) {
+        case 1:
+            (async () => {
+                await delay(600);
+                res.redirect('/todo');
+            })();
+
+            break;
+    }
+
 
 });
 
 router.get ('/archive', function (req, res) {
     tableToUse = req.cookies['tableToUse'];
     archivedList = [];
+
+    if (tableToUse == null){
+        tableToUse = 'todo';
+    }
     con.query("SELECT todo, description, DATE_FORMAT(`dateAdded`, '%Y-%m-%d %H:%i') AS `formatted_dateAdded`, DATE_FORMAT(`dateFinished`, '%Y-%m-%d %H:%i') AS `formatted_dateFinished`, DATE_FORMAT(`dateArchived`, '%Y-%m-%d %H:%i') AS `formatted_dateArchived` from `"+ tableToUse +"` WHERE archived = 1 ORDER BY dateArchived ASC", function (err, rows) {
         if (err){
             console.log(err);
@@ -195,7 +216,7 @@ router.get ('/archive', function (req, res) {
             dateArchived.push(result.formatted_dateArchived);
         });
 
-        res.render('archive', {archivedList: archivedList, descriptionListArchive:descriptionListArchive, dateAddedArchive:dateAddedArchive, dateFinishedArchive:dateFinishedArchive, dateArchived:dateArchived});
+        res.render('archive', {archivedList: archivedList, descriptionListArchive:descriptionListArchive, dateAddedArchive:dateAddedArchive, dateFinishedArchive:dateFinishedArchive, dateArchived:dateArchived, tableToUse:tableToUse});
         //console.log(archivedList);
         archivedList = [];
         descriptionListArchive = [];
@@ -206,6 +227,7 @@ router.get ('/archive', function (req, res) {
 
     });
 });
+
 
 router.post('/archivepost', function (req,res) {
     tableToUse = req.cookies['tableToUse'];
@@ -334,6 +356,66 @@ router.post('/usetable', function (req, res) {
 
 });
 
+// let todoEdit;
+// let doneOrFinished;
+// router.post('/editPost', function (req,res) {
+//     todoEdit = req.body.todo;
+//     doneOrFinished = req.body.editTodo;
+//     console.log(doneOrFinished);
+//     console.log(todoEdit);
+//
+//
+//
+//     res.redirect('/editGet')
+// });
+
+router.get('/editGet', function (req, res) {
+    tableToUse = req.cookies['tableToUse'];
+    let query;
+    let todo;
+    let desc;
+    console.log(finishedTodo);
+    if (doneDeleteArchive === 'edit'){
+        query = "select todo, description from `"+ tableToUse +"` WHERE done = 0 AND archived = 0 AND todo = '"+finishedTodo+"'";
+    }
+    console.log(query);
+
+    con.query(query, function (err, rows) {
+        if (err){
+            console.log(err);
+            return;
+        }
+        rows.forEach(function (result) {
+            todo = result.todo;
+            desc = result.description;
+        });
+    });
+
+
+    (async () => {
+        await delay(200);
+        console.log(todo);
+        console.log(desc);
+        res.render('edit', {todo:todo, desc:desc});
+    })();
+
+
+});
+
+router.post('/updateTodo', function (req, res) {
+    let move = false;
+    let remove = false;
+    let finishOrUndo = 0;
+    let currentTodoStatus = 0;
+    let archive = false;
+    let unArchive = false;
+    let update = true;
+    let newDesc = req.body.description;
+    let newTodo = req.body.item;
+    moveOrDelete.moveOrDelete(finishedTodo, move, remove, finishOrUndo, currentTodoStatus, archive, unArchive, tableToUse, update, newDesc, newTodo);
+    console.log(update);
+    res.redirect("/todo");
+});
 
 
 router.get('*', function (req, res) {

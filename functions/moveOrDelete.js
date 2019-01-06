@@ -1,6 +1,6 @@
 module.exports = {
 
-    moveOrDelete: function moveOrDelete(todoToUse, move, remove, finishOrUndo, currentStatus, archive, unarchive, tableToUse) {
+    moveOrDelete: function moveOrDelete(todoToUse, move, remove, finishOrUndo, currentStatus, archive, unarchive, tableToUse, update, newDesc, newTodo) {
         const mysql = require('mysql');
         const con = mysql.createConnection({
             host: "35.234.124.218",
@@ -9,7 +9,7 @@ module.exports = {
             database: "app"
         });
 
-        console.log(move);
+        console.log("move or delted is being calles");
         let query;
         //must the item be moved to finished?
         if (move == true && finishOrUndo == 1){
@@ -33,8 +33,13 @@ module.exports = {
         }
 
         //must item be unarchived?
-        else if (unarchive = true){
+        else if (unarchive == true){
             query = "UPDATE `"+ tableToUse +"` SET archived = 0, dateArchived = NULL WHERE ID = '"
+        }
+
+        else if (update == true){
+            query = "UPDATE `" + tableToUse + "` SET todo = '"+ newTodo +"', description = '"+ newDesc +"' WHERE ID = '";
+            console.log('jajahijiser');
         }
         //check if data is an array
         if (todoToUse instanceof Array){

@@ -43,7 +43,7 @@
 
             <!--input form-->
 
-            <form action="/newtodo" method="POST">
+            <form action="/newtodo" name="formLeft" method="POST">
                 <div class="form-group">
                     <label for="ToDo">Add a TODO:</label>
                     <input type="text" class="form-control" id="todo" name="item" required>
@@ -61,11 +61,12 @@
                 <% for(var i = 0; i < todoList.length; i++) {%>
                 <div class="checkbox">
                     <a href="#" data-toggle="popover" data-trigger="hover" data-html="true" title="Description" data-content="Date added: <%= dateAddedDone[i]%><br /> <%= descriptionListToDo[i]%>">
-                    <label><input type="checkbox" name="todo" value='<%= todoList[i] %>'><%= todoList[i] %></label>
+                    <label><input type="checkbox" name="todo"  value='<%= todoList[i] %>'><%= todoList[i] %></label>
                     </a>
                 </div>
                 <% } %>
                 <button type="submit" value="done" name="todoButton" class="btn btn-default">Mark selected items as done</button>
+                <button type="submit" value="edit" name="todoButton" class="btn btn-default">Change description</button>
                 <!--<button type="submit" value="archive" name="todoButton" class="btn btn-default">Archive selected item</button>-->
                 <button type="submit" value="delete" name="todoButton" class="btn btn-danger">Delete selected items</button>
 
@@ -93,11 +94,14 @@
 </div>
 
 
+
 <!--enable popover-->
 <script>
     $(document).ready(function(){
         $('[data-toggle="popover"]').popover();
     });
 </script>
+
+
 </body>
 </html>
