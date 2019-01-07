@@ -107,12 +107,13 @@ router.post('/newtodo', function(req, res) {
 
 
 let finishedTodo;
+let todoRight;
 let doneDeleteArchive;
 router.post('/finish', function(req, res) {
     tableToUse = req.cookies['tableToUse'];
     //finish.finish();
     finishedTodo = req.body.todo;
-    let todoRight = req.body.todoRight;
+    todoRight = req.body.todoRight;
     doneDeleteArchive = req.body.todoButton;
     let undoDeleteArchive = req.body.finishedButton;
     let move;
@@ -375,8 +376,12 @@ router.get('/editGet', function (req, res) {
     let todo;
     let desc;
     console.log(finishedTodo);
+    console.log(todoRight);
     if (doneDeleteArchive === 'edit'){
         query = "select todo, description from `"+ tableToUse +"` WHERE done = 0 AND archived = 0 AND todo = '"+finishedTodo+"'";
+    }
+    else if (todoRight != null){
+        query = "select todo, description from `"+ tableToUse +"` WHERE done = 1 AND archived = 0 AND todo = '"+todoRight+"'";
     }
     console.log(query);
 
@@ -412,9 +417,22 @@ router.post('/updateTodo', function (req, res) {
     let update = true;
     let newDesc = req.body.description;
     let newTodo = req.body.item;
-    moveOrDelete.moveOrDelete(finishedTodo, move, remove, finishOrUndo, currentTodoStatus, archive, unArchive, tableToUse, update, newDesc, newTodo);
+    console.log(newTodo);
+    if (todoRight != null){
+        currentTodoStatus = 1;
+        finishOrUndo = 1;
+        moveOrDelete.moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus, archive, unArchive, tableToUse, update, newDesc, newTodo);
+    }
+    else {
+        moveOrDelete.moveOrDelete(finishedTodo, move, remove, finishOrUndo, currentTodoStatus, archive, unArchive, tableToUse, update, newDesc, newTodo);
+    }
+
     console.log(update);
-    res.redirect("/todo");
+    (async () => {
+        await delay(200);
+        res.redirect("/todo");
+    })();
+
 });
 
 

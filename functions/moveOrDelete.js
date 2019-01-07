@@ -40,6 +40,7 @@ module.exports = {
         else if (update == true){
             query = "UPDATE `" + tableToUse + "` SET todo = '"+ newTodo +"', description = '"+ newDesc +"' WHERE ID = '";
             console.log('jajahijiser');
+            console.log(todoToUse);
         }
         //check if data is an array
         if (todoToUse instanceof Array){
@@ -47,6 +48,7 @@ module.exports = {
 
             //loop for array lenght to update the database
             for (var i = 0; i < todoToUse.length; i++){
+
                 con.query("SELECT * FROM `"+ tableToUse +"` WHERE todo = \""+todoToUse[i]+"\" AND done = \"" + currentStatus + "\"", function(err, rows){
                     if (err){
                         console.log(err);
@@ -76,6 +78,7 @@ module.exports = {
                 rows.forEach(function(result) {
                     toBeMoved = result.ID;
                     console.log(toBeMoved + 'testtest');
+                    console.log('testforid')
                 });
                 con.query(query + toBeMoved + "'", function(err) {
                     if (err){
