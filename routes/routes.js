@@ -229,21 +229,24 @@ router.get ('/archive', function (req, res) {
     });
 });
 
+let archiveButton;
+let todoToUse;
 
 router.post('/archivepost', function (req,res) {
     tableToUse = req.cookies['tableToUse'];
-    let doneOrDelete = req.body.archiveButton;
-    let todoToUse = req.body.archive;
+    archiveButton = req.body.archiveButton;
+    todoToUse = req.body.archive;
     let move;
     let remove;
     let finishOrUndo;
     let archive;
     let currentTodoStatus;
     let unarchive;
+    let redToArchive = 1;
     console.log(todoToUse);
 
     // delete if so desired
-    if (doneOrDelete == 'delete'){
+    if (archiveButton == 'delete'){
         move = false;
         remove = true;
         finishOrUndo = 0;
@@ -252,7 +255,7 @@ router.post('/archivepost', function (req,res) {
         moveOrDelete.moveOrDelete(todoToUse, move, remove, finishOrUndo, currentTodoStatus, archive, false, tableToUse)
     }
 
-    if (doneOrDelete == 'done'){
+    else if (archiveButton == 'done'){
         move = false;
         remove = false;
         finishOrUndo = 1;
@@ -262,10 +265,21 @@ router.post('/archivepost', function (req,res) {
         moveOrDelete.moveOrDelete(todoToUse, move, remove, finishOrUndo, currentTodoStatus, archive, unarchive, tableToUse);
     }
 
-    (async () => {
-        await delay(600);
-        res.redirect('/archive');
-    })();
+    else if (archiveButton === 'edit'){
+        res.redirect('/editGet');
+        redToArchive = 0;
+    }
+    switch (redToArchive) {
+        case 1:
+            (async () => {
+                await delay(600);
+                res.redirect('/archive');
+            })();
+
+            break;
+    }
+
+
 });
 
 router.get('/add', function(req, res){
@@ -378,10 +392,16 @@ router.get('/editGet', function (req, res) {
     console.log(finishedTodo);
     console.log(todoRight);
     if (doneDeleteArchive === 'edit'){
+        console.log("EDIT IN TODO");
         query = "select todo, description from `"+ tableToUse +"` WHERE done = 0 AND archived = 0 AND todo = '"+finishedTodo+"'";
     }
     else if (todoRight != null){
+        console.log("EDIT IN FINISHED");
         query = "select todo, description from `"+ tableToUse +"` WHERE done = 1 AND archived = 0 AND todo = '"+todoRight+"'";
+    }
+    else if (archiveButton === 'edit'){
+        console.log("EDIT IN ARCHIVE");
+        query = "select todo, description from `"+ tableToUse +"` WHERE archived = 1 AND todo = '"+todoToUse+"'";
     }
     console.log(query);
 
@@ -417,20 +437,36 @@ router.post('/updateTodo', function (req, res) {
     let update = true;
     let newDesc = req.body.description;
     let newTodo = req.body.item;
+    let redirectTo;
     console.log(newTodo);
+    console.log("archiveButton=" + archiveButton );
+    console.log("doneDeleteArchive ==" + doneDeleteArchive);
     if (todoRight != null){
         currentTodoStatus = 1;
         finishOrUndo = 1;
+        console.log("EDETING IN TODOLIST");
+        redirectTo = '/todo';
         moveOrDelete.moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus, archive, unArchive, tableToUse, update, newDesc, newTodo);
+        todoRight = null;
     }
-    else {
+    else if (archiveButton === 'edit'){
+        redirectTo = '/archive';
+        console.log("EDETING IN ARCHIVE!!!!!!!!!!");
+        currentTodoStatus = 1;
+        moveOrDelete.moveOrDelete(todoToUse, move, remove, finishOrUndo, currentTodoStatus, archive, unArchive, tableToUse, update, newDesc, newTodo);
+        archiveButton = null;
+    }
+    else if (doneDeleteArchive === 'edit'){
+        console.log("EDETING IN FINISHED TODOS");
+        redirectTo = '/todo';
         moveOrDelete.moveOrDelete(finishedTodo, move, remove, finishOrUndo, currentTodoStatus, archive, unArchive, tableToUse, update, newDesc, newTodo);
+        doneDeleteArchive = null;
     }
 
     console.log(update);
     (async () => {
         await delay(200);
-        res.redirect("/todo");
+        res.redirect(redirectTo);
     })();
 
 });
