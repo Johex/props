@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const mysql = require('mysql');
 const path = require('path');
-const moveOrDelete = require('Y:\\6\\Informatics\\pws\\props\\functions\\moveOrDelete.js');
+const moveOrDelete = require('../functions/moveOrDelete.js');
 const cookieParser = require('cookie-parser');
 const delay = require('delay');
 //const archive = require('Y:\\6\\Informatics\\pws\\props\\functions/archive.js');
@@ -178,7 +178,7 @@ router.post('/finish', function(req, res) {
         moveOrDelete.moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus, archive, false, tableToUse);
     }
 
-    else {
+    else if (doneDeleteArchive === 'edit' || undoDeleteArchive === 'edit'){
         res.redirect('/editGet');
         redToTodo = 0
     }
@@ -286,7 +286,7 @@ router.get('/add', function(req, res){
     tableToUse = req.cookies['tableToUse'];
 
     let newTableName;
-    const getTablesQuery = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA='app' "
+    const getTablesQuery = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA='app' ";
 
     con.query(getTablesQuery, function (err, rows) {
         if (err){
