@@ -604,6 +604,6 @@
     }
   },
   "scripts": {
-    "start": "node expressapp.js"
+    "start": "node /app/expressapp.js"
   }
 }
