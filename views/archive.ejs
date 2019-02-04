@@ -5,53 +5,54 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://storage.googleapis.com/matisse/style/bootstrap.min.css">
+    <link rel="stylesheet" href="/todo.css">
     <script src="https://storage.googleapis.com/matisse/style/jquery-3.2.1.slim.min.js"></script>
     <script src="https://storage.googleapis.com/matisse/style/popper.min.js"></script>
     <script src="https://storage.googleapis.com/matisse/style/bootstrap.min.js"></script>
-    <title>Hello, world!</title>
+    <title>Archive List</title>
 </head>
-<body>
+<body class="background">
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-    <a class="navbar-brand" href="/#">
-        <img src="https://storage.googleapis.com/matisse/afbeeldingen/250px-Flag_of_Sint_Maarten.svg.png" alt="Logo" style="width:40px;">
-    </a>
+
 
 
     <!-- Links -->
     <ul class="navbar-nav">
         <li class="nav-item">
-            <a class="nav-link" href="todo">TODO list</a>
+            <a class="nav-link" href="/">Todo list</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">Link 2</a>
+            <a class="nav-link" href="archive">Archive</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">Link 3</a>
+            <a class="nav-link" href="add">Change or add a list</a>
         </li>
     </ul>
 </nav>
 
 <!--archived list-->
 <div class="container">
-    <h1 class="text-center">Archive: <%= tableToUse%></h1>
-    <div class="row">
-        <div class="col">
+    <h1 class="text-center display-4">Archive from <%= tableToUse%></h1>
+    <div class="row moremargin">
+        <div class="col align-self-center">
             <form action="/archivepost" method="POST">
                 <div class="checkbox">
                     <% for(var i = 0; i < archivedList.length; i++) {%>
                     <div class="checkbox">
-                        <a href="#"  data-toggle="popover" data-trigger="hover" data-html="true" title="Description" data-content="Date added: <%= dateAddedArchive[i]%><br /> Date finished: <%= dateFinishedArchive[i]%><br /> Date archived: <%= dateArchived[i]%><br /><%= descriptionListArchive[i] %>">
+                        <a href="#"  data-toggle="popover" data-trigger="hover" data-html="true" title="Information" data-content="Date added: <%= dateAddedArchive[i]%><br /> Date finished: <%= dateFinishedArchive[i]%><br /> Date archived: <%= dateArchived[i]%><br /><%= descriptionListArchive[i] %>">
                         <label><input type="checkbox" name="archive" value='<%= archivedList[i] %>'><%= archivedList[i] %></label>
                         </a>
                     </div>
                     <% } %>
                 </div>
 
-                <button type="submit" value="done" name="archiveButton" class="btn btn-default">Mark selected items as done</button>
-                <button type="submit" value="edit" name="archiveButton" class="btn btn-default">Change description</button>
-                <button type="submit" value="delete" name="archiveButton" class="btn btn-danger">Delete selected items</button>
+                <button type="submit" value="done" name="archiveButton" class="btn btn-default topmargin">Mark selected items as done</button>
+                <button type="submit" value="edit" name="archiveButton" class="btn btn-default topmargin">Change description</button>
+                <button type="submit" value="delete" name="archiveButton" class="btn btn-danger topmargin">Delete selected items</button>
 
             </form>
         </div>

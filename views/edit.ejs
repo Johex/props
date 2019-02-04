@@ -5,6 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+
+    <link rel="stylesheet" href="/todo.css">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://storage.googleapis.com/matisse/style/bootstrap.min.css">
     <script src="https://storage.googleapis.com/matisse/style/jquery-3.2.1.slim.min.js"></script>
@@ -12,20 +14,27 @@
     <script src="https://storage.googleapis.com/matisse/style/bootstrap.min.js"></script>
     <title>Hello, world!</title>
 </head>
-<body>
+<body class="background">
+<div class="container">
+    <div class="row">
+        <div class="col align-self-center">
+            <form action="/updateTodo" method="POST">
+                <div class="form-group">
+                    <label for="ToDo">Edit TODO:</label>
+                    <input type="text" class="form-control" id="todo" name="item" value="<%= todo %>" required>
+                </div>
+                <div class="form-group">
+                    <label for="ToDoDescription">Edit description:</label>
+                    <textarea type="text" class="form-control" id="todoDescription" name="description" required><%= desc %></textarea>
+                </div>
+                <button type="submit" class="btn btn-default">Edit</button>
+                <!--todo no breaks-->
+            </form><br><br>
+        </div>
+    </div>
 
-<form action="/updateTodo" method="POST">
-<div class="form-group">
-    <label for="ToDo">Edit TODO:</label>
-    <input type="text" class="form-control" id="todo" name="item" value="<%= todo %>" required>
 </div>
-<div class="form-group">
-    <label for="ToDoDescription">Edit description:</label>
-    <textarea type="text" class="form-control" id="todoDescription" name="description" required><%= desc %></textarea>
-</div>
-<button type="submit" class="btn btn-default">Submit</button>
-<!--todo no breaks-->
-</form><br><br>
+
 
 
 

@@ -34,12 +34,9 @@ let tableToUseOrDelete;
 let tableList = [];
 let tableToUse;
 
-router.get('/', function(req, res){
-    res.render('index')
-});
 
 // to-do page
-router.get('/todo', function(req, res){
+router.get('/', function(req, res){
     //get data from the database
     //get the not yet done to-do's
     todoList = [];
@@ -100,7 +97,7 @@ router.post('/newtodo', function(req, res) {
             return;
         }
         console.log("inserted: ", item);
-        res.redirect("/todo");
+        res.redirect("/");
     })
 
 });
@@ -188,7 +185,7 @@ router.post('/finish', function(req, res) {
         case 1:
             (async () => {
                 await delay(600);
-                res.redirect('/todo');
+                res.redirect('/');
             })();
 
             break;
@@ -363,7 +360,7 @@ router.post('/usetable', function (req, res) {
             await delay(500);
             console.log(req.cookies['tableToUse']);
             tableToUse = req.cookies['tableToUse'];
-            res.redirect('/todo');
+            res.redirect('/');
         })();
     }
 
@@ -445,7 +442,7 @@ router.post('/updateTodo', function (req, res) {
         currentTodoStatus = 1;
         finishOrUndo = 1;
         console.log("EDETING IN TODOLIST");
-        redirectTo = '/todo';
+        redirectTo = '/';
         moveOrDelete.moveOrDelete(todoRight, move, remove, finishOrUndo, currentTodoStatus, archive, unArchive, tableToUse, update, newDesc, newTodo);
         todoRight = null;
     }
@@ -458,7 +455,7 @@ router.post('/updateTodo', function (req, res) {
     }
     else if (doneDeleteArchive === 'edit'){
         console.log("EDETING IN FINISHED TODOS");
-        redirectTo = '/todo';
+        redirectTo = '/';
         moveOrDelete.moveOrDelete(finishedTodo, move, remove, finishOrUndo, currentTodoStatus, archive, unArchive, tableToUse, update, newDesc, newTodo);
         doneDeleteArchive = null;
     }
